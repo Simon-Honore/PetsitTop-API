@@ -2,10 +2,10 @@
 
 BEGIN;
 
-CREATE DOMAIN "email" AS TEXT
+CREATE DOMAIN email AS TEXT
   CHECK(VALUE ~ '^[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]{2,}[.][a-zA-Z]{2,}$');
 
-CREATE DOMAIN "postal_code_fr" AS TEXT
+CREATE DOMAIN postal_code_fr AS TEXT
   CHECK(value ~ '^0[1-9]\d{3}$' -- code postaux de 01 à 09
   OR value ~ '^1\d{4}$' -- code postaux du 10 au 19
   OR value ~ '^20[012]\d{2}$|^20600$|^20620$' -- code postaux Corse
@@ -14,6 +14,7 @@ CREATE DOMAIN "postal_code_fr" AS TEXT
   OR value ~ '^9[0-5]\d{3}$' -- code postaux du 90 au 95
   OR value ~ '^9[78]\d{3}$' -- code postaux du 97 au 98
 );
+
 
 CREATE TABLE "user" (
   "id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -69,7 +70,8 @@ CREATE TABLE "user_has_pet_type" (
   "user_id" INT REFERENCES "user"("id"),
   "pet_type_id" INT REFERENCES "pet_type"("id"),
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT now(),
-  "updated_at" TIMESTAMPTZ
+  "updated_at" TIMESTAMPTZ,
+  UNIQUE("user_id","pet_type_id")
 );
 
 CREATE TABLE "user_has_role" (
@@ -77,7 +79,8 @@ CREATE TABLE "user_has_role" (
   "user_id" INT REFERENCES "user"("id"),
   "role_id" INT REFERENCES "role"("id"),
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT now(),
-  "updated_at" TIMESTAMPTZ
+  "updated_at" TIMESTAMPTZ,
+  UNIQUE("user_id","role_id")
 );
 
 COMMIT;
