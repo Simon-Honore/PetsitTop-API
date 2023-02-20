@@ -3,7 +3,7 @@
 BEGIN;
 
 CREATE DOMAIN email AS TEXT
-  CHECK(VALUE ~ '^[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]{2,}[.][a-zA-Z]{2,}$');
+  CHECK(VALUE ~ '^[a-zA-Z0-9.-_]+@[a-zA-Z0-9.-]{2,}[.][a-zA-Z]{2,}$');
 
 CREATE DOMAIN postal_code_fr AS TEXT
   CHECK(value ~ '^0[1-9]\d{3}$' -- code postaux de 01 à 09
