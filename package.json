@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dbreset": "sqitch revert -y && sqitch deploy",
+    "dbseeding": "node data/seeding-user.js && node data/seeding-pet_type.js && node data/seeding-pet.js && node data/seeding-ad.js && node data/seeding-role.js && node data/seeding-user_has_pet_type.js && node data/seeding-user_has_role.js"
   },
   "repository": {
     "type": "git",
@@ -23,6 +25,7 @@
     "pg": "^8.9.0"
   },
   "devDependencies": {
+    "@faker-js/faker": "^7.6.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.27.5"
   }
