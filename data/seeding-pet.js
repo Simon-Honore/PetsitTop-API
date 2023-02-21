@@ -29,6 +29,7 @@ const client = require('./db');
       INSERT INTO "pet" ("name", "user_id", "pet_type_id") VALUES
       ${valuesWithParenthesis}
   `;
+  console.log(query);
   await client.query(query);
 
   await client.end();

@@ -33,6 +33,7 @@ const client = require('./db');
       INSERT INTO "ad" ("title", "content", "city", "postal_code", "user_id") VALUES
       ${valuesWithParenthesis}
   `;
+  console.log(query);
   await client.query(query);
 
   await client.end();

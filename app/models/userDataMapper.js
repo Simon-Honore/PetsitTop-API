@@ -83,11 +83,34 @@ const userDataMapper = {
   //   )
   // )
 
+  createUser: async (createObj) => {
+    debug('createObj', createObj);
+    debug('createUser');
+    const query = {
+      text: `
+        SELECT * FROM new_user($1);
+      `,
+      values: [createObj],
+    };
+    debug('query', query);
+    const results = await client.query(query);
+    return results.rows[0];
+  },
+
+  // SELECT * FROM new_user('{
+  //   "first_name": "Catherine",
+  //   "last_name": "K",
+  //   "email": "keller@gmail.com",
+  //   "password": "1234",
+  //   "postal_code": "67870",
+  //   "city": "Strasbourg",
+  //   "availability": true
+  // }')
 };
 
 module.exports = userDataMapper;
 
-// OK avec imbriquées
+// findAllAvailablePetsitters avec imbriquées
 // SELECT
 // "user".*,
 // (
