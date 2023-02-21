@@ -7,6 +7,7 @@
     "devWin": "@powershell -Command $env:DEBUG='opet:*'; npx nodemon index.js",
     "dev": "DEBUG=opet:* npx nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
     "dbreset": "sqitch revert -y && sqitch deploy",
     "dbseeding": "node data/seeding-user.js && node data/seeding-pet_type.js && node data/seeding-pet.js && node data/seeding-ad.js && node data/seeding-role.js && node data/seeding-user_has_pet_type.js && node data/seeding-user_has_role.js"
   },
