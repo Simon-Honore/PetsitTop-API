@@ -23,6 +23,18 @@ app.use(express.json());
 //   res.send(req.body);
 // });
 
+// pour ne plus utiliser controllerHandler on pass next (=tous les middlewares suivants) dans try:
+// app.use((req, res, next) => {
+//   try {
+//     next();
+//   } catch (err) {
+//     debug(err.message);
+//     const status = err.statusCode || 500;
+//     const { message } = err;
+//     res.status(status).json({ error: message });
+//   }
+// });
+
 // Routage
 app.use(router);
 

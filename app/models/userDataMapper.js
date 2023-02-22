@@ -83,6 +83,60 @@ const userDataMapper = {
   //     WHERE "user_has_role"."user_id"="user"."id"
   //   )
   // )
+  findPetsByUserId: async (id) => {
+    debug('findPetsByUserId');
+    debug('id', id);
+    const query = {
+      text: `
+        SELECT "pet".*
+        FROM "pet"        
+        WHERE "pet"."user_id" = $1
+      `,
+    };
+  },
+
+  findAdsByUserId: async (id) => {
+    debug('findAdsByUserId');
+    debug('id', id);
+  },
+
+  findUserById: async (id) => {
+    debug('findUserById');
+    debug('id', id);
+    const query = {
+      text: `
+        SELECT 
+          "user".*,
+          ARRAY_AGG(DISTINCT "pet_type"."name" ORDER BY "pet_type"."name" DESC) AS "pet_types",
+          ARRAY_AGG(DISTINCT "role"."name") AS "role_names",
+          ARRAY_AGG(DISTINCT "pet"."id") AS "pets",
+          ARRAY_AGG(DISTINCT "ad"."id") AS "ads"
+        FROM
+          "user"
+        LEFT JOIN "user_has_pet_type" ON "user"."id"="user_has_pet_type"."user_id"
+        LEFT JOIN "pet_type" ON "user_has_pet_type"."pet_type_id"="pet_type"."id"
+        LEFT JOIN "user_has_role" ON "user"."id"="user_has_role"."user_id"
+        LEFT JOIN "role" ON "user_has_role"."role_id"="role"."id"
+        LEFT JOIN "pet" ON "pet"."user_id" = "user"."id"
+        LEFT JOIN "ad" ON "ad"."user_id" = "user"."id"
+        WHERE 
+          "user"."id" = $1
+        GROUP BY "user"."id";
+      `,
+      values: [id],
+    };
+    const results = await client.query(query);
+
+    const resultRows = results.rows[0];
+
+    // Ajout Pets
+    // resultRows.pets = {};
+
+    // Ajout Ads
+    // resultRows.ads = {};
+
+    return results.rows[0];
+  },
 
   // Ajout d'un user avec ses roles
   createUser: async (createObj) => {

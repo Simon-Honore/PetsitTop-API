@@ -10,11 +10,13 @@ const client = require('./db');
 
   const values = Array.from({ length: 10 }).map(() => {
     const name = faker.name.firstName();
+    const presentation = faker.lorem.paragraphs(1);
     const user_id = faker.datatype.number({ min: 1, max: 10 });
     const pet_type_id = faker.datatype.number({ min: 1, max: 8 });
 
     return [
       `'${name}'`,
+      `'${presentation}'`,
       user_id,
       pet_type_id,
     ];
@@ -26,7 +28,7 @@ const client = require('./db');
 
   // On transforme le tableau de string en string
   const query = `
-      INSERT INTO "pet" ("name", "user_id", "pet_type_id") VALUES
+      INSERT INTO "pet" ("name", "presentation", "user_id", "pet_type_id") VALUES
       ${valuesWithParenthesis}
   `;
   console.log(query);

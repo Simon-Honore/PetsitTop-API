@@ -5,16 +5,24 @@ const userDataMapper = require('../models/userDataMapper');
 
 const userController = {
 
-  getAllUsers: async (request, response) => {
+  async getAllUsers(request, response) {
     debug('getAllUsers');
     const users = await userDataMapper.findAllUsers();
     response.status(200).json(users);
   },
-  getSearchResults: async (request, response) => {
+  async getSearchResults(request, response) {
     debug('getSearchResults');
     const { department, pet_type: petType } = request.query;
     const users = await userDataMapper.findAllAvailablePetsittersFilter(department, petType);
     response.status(200).json(users);
+  },
+
+  async getOneUser(request, response) {
+    debug('getOneUser');
+    const searchedId = Number(request.params.id);
+
+    const user = await userDataMapper.findUserById(searchedId);
+    response.status(200).json(user);
   },
 
   async createUser(request, response) {
