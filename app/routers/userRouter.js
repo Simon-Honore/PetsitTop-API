@@ -4,6 +4,9 @@ const userRouter = require('express').Router();
 const userController = require('../controllers/userController');
 const controllerHandler = require('../controllers/controllerHandler');
 
+userRouter.get('/users/:id', controllerHandler(userController.getOneUser));
+
 userRouter.get('/users', controllerHandler(userController.getSearchResults));
+userRouter.post('/users', controllerHandler(userController.createUser));
 
 module.exports = userRouter;

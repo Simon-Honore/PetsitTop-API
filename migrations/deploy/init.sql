@@ -1,3 +1,4 @@
+-- SQLBook: Code
 -- Deploy opet:init to pg
 
 BEGIN;
@@ -41,6 +42,7 @@ CREATE TABLE "pet_type" (
 CREATE TABLE "pet" (
   "id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   "name" TEXT NOT NULL,
+  "presentation" TEXT,
   "user_id" INT REFERENCES "user"("id"),
   "pet_type_id" INT REFERENCES "pet_type"("id"), 
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT now(),
