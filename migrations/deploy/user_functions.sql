@@ -18,4 +18,14 @@ CREATE OR REPLACE FUNCTION new_user(user_data json) RETURNS "user" AS $$
   RETURNING *;
 $$ LANGUAGE sql STRICT;
 
+
+CREATE OR REPLACE FUNCTION new_user_has_role(user_has_role_data json) RETURNS "user_has_role" AS $$
+  INSERT INTO "user_has_role" ("user_id", "role_id")
+  VALUES (
+    (user_has_role_data->>'user_id')::int,
+    (user_has_role_data->>'role_id')::int
+  )
+  RETURNING *;
+$$ LANGUAGE sql STRICT;
+
 COMMIT;

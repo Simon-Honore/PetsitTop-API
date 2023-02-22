@@ -2,6 +2,6 @@
 
 BEGIN;
 
-DROP FUNCTION "new_user";
+DROP FUNCTION "new_user","new_user_has_role";
 
 COMMIT;

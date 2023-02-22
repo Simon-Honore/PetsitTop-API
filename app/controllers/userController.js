@@ -18,9 +18,7 @@ const userController = {
 
   async createUser(request, response) {
     debug('createUser');
-    // const { body } = request;
-    const body = JSON.stringify(request.body);
-    debug('req.body après Json.stringify: ', body);
+    const { body } = request;
     const user = await userDataMapper.createUser(body);
     debug(user);
     response.status(201).json(user);
