@@ -88,16 +88,39 @@ const userDataMapper = {
     debug('id', id);
     const query = {
       text: `
-        SELECT "pet".*
-        FROM "pet"        
-        WHERE "pet"."user_id" = $1
+        SELECT
+          "pet"."id",
+          "pet"."name",
+          "pet"."presentation",
+          "pet_type"."name" AS "pet_type"
+        FROM "pet" 
+        JOIN "pet_type" ON "pet"."pet_type_id"="pet_type"."id"       
+        WHERE "pet"."user_id" = $1;
       `,
+      values: [id],
     };
+    const results = await client.query(query);
+    return results.rows; // retourne un tableau contenant des objets (chaque pet = un objet)
   },
 
   findAdsByUserId: async (id) => {
     debug('findAdsByUserId');
     debug('id', id);
+    const query = {
+      text: `
+        SELECT
+          "ad"."id",
+          "ad"."title",
+          "ad"."content",
+          "ad"."city",
+          "ad"."postal_code"
+        FROM "ad"        
+        WHERE "ad"."user_id" = $1
+      `,
+      values: [id],
+    };
+    const results = await client.query(query);
+    return results.rows; // retourne un tableau contenant des objets (chaque ad = un objet)
   },
 
   findUserById: async (id) => {
@@ -129,13 +152,15 @@ const userDataMapper = {
 
     const resultRows = results.rows[0];
 
-    // Ajout Pets
-    // resultRows.pets = {};
+    // Ajout Pets (dans une propriété "pets" qui contient un tableau avec le détail de chaque "pet")
+    const petsList = await userDataMapper.findPetsByUserId(id);
+    resultRows.pets = petsList;
 
     // Ajout Ads
-    // resultRows.ads = {};
+    const adsList = await userDataMapper.findAdsByUserId(id);
+    resultRows.ads = adsList;
 
-    return results.rows[0];
+    return resultRows;
   },
 
   // Ajout d'un user avec ses roles
@@ -144,7 +169,7 @@ const userDataMapper = {
     debug('createUser');
 
     // A partir de l'objet "createObj"(=request.body), je récupère role_petsitter et role_petsitter
-    // et création d'un nouvel objet "createObj2" qui comporte les autres propriétés pour la table user
+    // et création nouvel objet "createObj2" qui comporte les autres propriétés pour la table user
     const { role_petsitter, role_petowner, ...createObj2 } = createObj;
 
     // Insertion de l'user dans la table "user"
