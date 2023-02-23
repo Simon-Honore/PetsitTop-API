@@ -10,7 +10,7 @@ const client = require('./db');
         ('chien'),
         ('chat'),
         ('lapin'),
-        ('rongueur'),
+        ('rongeur'),
         ('oiseau'),
         ('poisson'),
         ('reptile'),
