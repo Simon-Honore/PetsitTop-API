@@ -123,6 +123,20 @@ const userDataMapper = {
     return results.rows; // retourne un tableau contenant des objets (chaque ad = un objet)
   },
 
+  findUserByEmail: async (email) => {
+    debug('findUserByEmail');
+    debug('email', email);
+    const query = {
+      text: `
+        SELECT * from "user"
+        WHERE "email" = $1;
+      `,
+      values: [email],
+    };
+    const results = await client.query(query);
+    return results.rows[0];
+  },
+
   findUserById: async (id) => {
     debug('findUserById');
     debug('id', id);
@@ -179,7 +193,7 @@ const userDataMapper = {
       `,
       values: [createObj2],
     };
-    debug('query', query);
+    // debug('query', query);
     const results = await client.query(query);
 
     // Insertion du role dans la table "user_has_role" :
@@ -201,7 +215,6 @@ const userDataMapper = {
     const resultsRow = results.rows[0];
     resultsRow.roles = [];
 
-    // A vérifier : condition avec le front
     // debug('role_petsitter', role_petsitter);
     if (role_petsitter === 'true') {
       newObj.role_id = 1;
@@ -220,7 +233,7 @@ const userDataMapper = {
       resultsRow.roles.push(resultPetowner.rows[0].role_id);
     }
 
-    debug('objet final :', results.rows[0]);
+    // debug('objet final :', results.rows[0]);
 
     // Pour faire une seule requete : à voir plus tard
     // const createRoleObj = {
@@ -241,42 +254,6 @@ const userDataMapper = {
 
     return results.rows[0];
   },
-
-  // SELECT * FROM new_user('{
-  //   "first_name": "Catherine",
-  //   "last_name": "K",
-  //   "email": "keller@gmail.com",
-  //   "password": "1234",
-  //   "postal_code": "67870",
-  //   "city": "Strasbourg",
-  //   "availability": true
-  // }')
 };
 
 module.exports = userDataMapper;
-
-// findAllAvailablePetsitters avec imbriquées
-// SELECT
-// "user".*,
-// (
-//   SELECT ARRAY_AGG("pet_type"."name")
-//   FROM "pet_type"
-//   WHERE "pet_type"."id" IN
-//   (
-//     SELECT "pet_type_id"
-//     FROM "user_has_pet_type"
-//     WHERE "user_has_pet_type"."user_id"="user"."id"
-//   )
-// ) AS "pet_types"
-// FROM "user"
-// WHERE "user"."availability" = true AND 'petsitter' IN
-//   (
-//     SELECT UNNEST(ARRAY_AGG("role"."name"))
-//     FROM "role"
-//     WHERE "role"."id" IN
-//     (
-//       SELECT "role_id"
-//       FROM "user_has_role"
-//       WHERE "user_has_role"."user_id" = "user"."id"
-//     )
-// );

@@ -25,20 +25,30 @@ const userController = {
     response.status(200).json(user);
   },
 
-  async createUser(request, response) {
+  async createUser(request, response, next) {
     debug('createUser');
     const { body } = request;
 
-    // Crypte le password de l'user avec Bcrypt
+    // Test si email existe déjà
+    const isExistingUser = await userDataMapper.findUserByEmail(body.email);
+    if (isExistingUser) {
+      return next(new Error('Email already exists'));
+    }
+
+    // Hash le password de l'user avec Bcrypt
     // doc: https://www.npmjs.com/package/bcrypt
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(body.password, saltRounds);
     // on remplace le password en clair par le 'hashé' pour le stockage en DB:
     body.password = hashedPassword;
 
-    const user = await userDataMapper.createUser(body);
-    debug(user);
-    response.status(201).json(user);
+    // Security: we remove the confirmPassword (not hashed) from request.body to prevent data leaks:
+    const { confirmPassword, ...bodySafe } = body;
+
+    const user = await userDataMapper.createUser(bodySafe);
+
+    // debug(user);
+    return response.status(201).json(user);
   },
 
 };
