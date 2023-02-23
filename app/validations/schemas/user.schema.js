@@ -1,6 +1,25 @@
 const Joi = require('joi');
 
 const schemas = {
+  get: Joi.object({
+    department: Joi
+      .string()
+      .pattern(/(^0[1-9]$)|(^[1-8]\d$)|(^9[0-5]$)/)
+      .required(),
+    pet_type: Joi
+      .string()
+      .valid(
+        'chien',
+        'chat',
+        'lapin',
+        'rongeur',
+        'oiseau',
+        'poisson',
+        'reptile',
+        'autre',
+      )
+      .required(),
+  }).required(),
   post: Joi.object({
     first_name: Joi
       .string()
@@ -25,6 +44,8 @@ const schemas = {
       // at least 1 uppercase letter, 1 lowercase letter, 1 number
       // and 1 special character (@$!%*?&)
       .required(),
+    confirmPassword: Joi.string().required().valid(Joi.ref('password')).options({
+    }),
     postal_code: Joi
       .string()
       .pattern(/(^0[1-9]\d{3}$)|(^1\d{4}$)|(^20[012]\d{2}$|^20600$|^20620$)|(^2[1-9]\d{3}$)|(^[3-8]\d{4}$)|(^9[0-5]\d{3}$)|(^9[78]\d{3}$)/)
