@@ -1,20 +1,18 @@
 const Joi = require('joi');
 
 const schemas = {
-  get: Joi.object({
+  post: Joi.object({
     first_name: Joi
       .string()
-      .min(2)
-      .pattern(/^[a-zA-ZÀ-ÿ '-][a-zA-ZÀ-ÿ '-]+$/)
+      .pattern(/^[a-zA-ZÀ-ÿ '-]{2,}$/)
       .required(),
     last_name: Joi
       .string()
-      .min(2)
-      .pattern(/^[a-zA-ZÀ-ÿ '-][a-zA-ZÀ-ÿ '-]+$/)
+      .pattern(/^[a-zA-ZÀ-ÿ '-]{2,}$/)
       .required(),
     email: Joi
       .string()
-    // ajouter pattern ?
+      // .pattern(/^[a-z0-9-]+@[a-z0-9-]+$/) besoin ou inclus dans .email ci-dessous?
       .email({
         tlds: { allow: true },
         // the TLD (top level domain) must be a valid name listed on the IANA registry
@@ -29,8 +27,6 @@ const schemas = {
       .required(),
     postal_code: Joi
       .string()
-      .min(5)
-      .max(5)
       .pattern(/(^0[1-9]\d{3}$)|(^1\d{4}$)|(^20[012]\d{2}$|^20600$|^20620$)|(^2[1-9]\d{3}$)|(^[3-8]\d{4}$)|(^9[0-5]\d{3}$)|(^9[78]\d{3}$)/)
     // regex from our SQl DOMAIN "postal_code_fr" in DB
       .required(),
@@ -49,10 +45,16 @@ const schemas = {
       .string()
       .max(250)
       .allow(''),
+    role_petsitter: Joi
+      .boolean()
+      .required(),
+    role_petowner: Joi
+      .boolean()
+      .required(),
   }).required(),
   //   patch: Joi.object({
 
-//   }).required(),
+  //   }).required(),
 };
 
 module.exports = schemas;

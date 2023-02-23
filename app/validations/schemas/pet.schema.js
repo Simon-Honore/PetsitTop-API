@@ -1,11 +1,10 @@
 const Joi = require('joi');
 
 const schemas = {
-  get: Joi.object({
+  post: Joi.object({
     name: Joi
       .string()
-      .min(2)
-      .pattern(/^[a-zA-ZÀ-ÿ '-][a-zA-ZÀ-ÿ '-]+$/)
+      .pattern(/^[a-zA-ZÀ-ÿ '-]{2,}$/)
       .required(),
     presentation: Joi
       .string()
