@@ -177,7 +177,29 @@ const userDataMapper = {
     return resultRows;
   },
 
-  // Ajout d'un user avec ses roles
+  findUserWithRoleById: async (id) => {
+    debug('findUserSimpleById');
+    debug('id', id);
+    const query = {
+      text: `
+        SELECT
+          "user".*,
+          ARRAY_AGG(DISTINCT "role"."name") AS "role_names"
+        FROM "user"
+        LEFT JOIN "user_has_role" ON "user"."id"="user_has_role"."user_id"
+        LEFT JOIN "role" ON "user_has_role"."role_id"="role"."id"
+        WHERE 
+          "user"."id" = $1
+        GROUP BY "user"."id";
+      `,
+      values: [id],
+    };
+    const results = await client.query(query);
+
+    return results.rows[0];
+  },
+
+  // Add one user with their roles
   createUser: async (createObj) => {
     debug('createObj', createObj);
     debug('createUser');
@@ -187,29 +209,29 @@ const userDataMapper = {
     const { role_petsitter, role_petowner, ...createObj2 } = createObj;
 
     // Insertion de l'user dans la table "user"
-    const query = {
+    const queryUser = {
       text: `
         SELECT * FROM new_user($1);
       `,
       values: [createObj2],
     };
     // debug('query', query);
-    const results = await client.query(query);
+    const results = await client.query(queryUser);
 
     // Insertion du role dans la table "user_has_role" :
     // un enregistrement si role petsitter, 1 enregistrement si role petowner
 
     // on récupère l'id du user qu'on vient d'insérer en table "user" :
-    const { id } = results.rows[0];
+    const { id: userId } = results.rows[0];
 
     // Par défaut le role est petowner
-    const newObj = { user_id: id, role_id: 2 };
+    const userRoleObj = { user_id: userId, role_id: 2 };
 
-    const query2 = {
+    const queryUserRole = {
       text: `
         SELECT * FROM new_user_has_role($1);
       `,
-      values: [newObj],
+      values: [userRoleObj],
     };
 
     const resultsRow = results.rows[0];
@@ -217,8 +239,8 @@ const userDataMapper = {
 
     // debug('role_petsitter', role_petsitter);
     if (role_petsitter === 'true') {
-      newObj.role_id = 1;
-      const resultPetsitter = await client.query(query2);
+      userRoleObj.role_id = 1;
+      const resultPetsitter = await client.query(queryUserRole);
       // debug('resultPetsitter :', resultPetsitter.rows[0]);
       // on rajoute une propriété à notre objet final result.rows[0]
       // results.rows[0].role_petsitter = resultPetsitter.rows[0].role_id;
@@ -226,8 +248,8 @@ const userDataMapper = {
     }
     // debug('role_petowner', role_petowner);
     if (role_petowner === 'true') {
-      newObj.role_id = 2;
-      const resultPetowner = await client.query(query2);
+      userRoleObj.role_id = 2;
+      const resultPetowner = await client.query(queryUserRole);
       // debug('resultPetowner :', resultPetowner.rows[0]);
       // results.rows[0].role_petowner = resultPetowner.rows[0].role_id;
       resultsRow.roles.push(resultPetowner.rows[0].role_id);
@@ -253,6 +275,132 @@ const userDataMapper = {
     // }
 
     return results.rows[0];
+  },
+
+  // Modify one user
+  modifyUser: async (id, modifyObj, userBeforeSave) => {
+    debug('modifyUser');
+    debug('id', id);
+    // debug('modifyObj', modifyObj);
+    // debug('userBeforeSave', userBeforeSave);
+
+    const { role_petsitter, role_petowner, ...modifyUserObj } = modifyObj;
+
+    let results = {};
+    // Modify user in table "user"
+
+    // Check if unchanged email : use update_user function
+    if (userBeforeSave.email === modifyObj.email) {
+      // debug('email identique');
+      const { email, ...modifyObjNoEmail } = modifyUserObj;
+      const queryUser = {
+        text: `
+          SELECT * FROM update_user($1)
+        `,
+        values: [{ ...modifyObjNoEmail, id }],
+      };
+      results = await client.query(queryUser);
+    } else {
+      // use update_userWithEmail function if new email
+      // debug('email différent');
+      const queryUser = {
+        text: `
+          SELECT * FROM update_userWithEmail($1)
+        `,
+        values: [{ ...modifyUserObj, id }],
+      };
+      results = await client.query(queryUser);
+    }
+    // debug('userAfterSave', results.rows[0]);
+
+    // Modify role in table "user_has_role"
+    // On récupère l'id du user qu'on vient de modifier en table "user" :
+    const { id: userId } = results.rows[0];
+    // debug('userId', userId);
+
+    // ---------IDEALEMENT : REFACTO DE CE QUI SUIT DANS UNE AUTRE FONCTION
+    // ---------PAR EXEMPLE "modifyUserHasRole"
+    //---------
+
+    // Promesses pour les requêtes asynchrones
+    const promises = [];
+
+    // 1) Tester si le role petsitter existe déjà
+    if (userBeforeSave.role_names.includes('petsitter')) {
+      // debug('userBeforeChangeRole.includes("petsitter")');
+
+      // Si oui, et que le nouveau role est false, on le supprime
+      if (role_petsitter === 'false') {
+        // debug('role_petsitter === "false"');
+        const queryUserRole = {
+          text: `
+            DELETE FROM "user_has_role"
+            WHERE "user_id" = $1
+            AND "role_id" = 1
+          `,
+          values: [userId],
+        };
+
+        promises.push(client.query(queryUserRole));
+      }
+    } else {
+      // 1bis) Sinon (role petsitter est absent de role_names)
+      // et si role_petsitter est true
+      const queryUserRole = {
+        text: `
+          INSERT INTO "user_has_role"("user_id", "role_id")
+          VALUES ($1, 1)
+          RETURNING *;
+        `,
+        values: [userId],
+      };
+
+      promises.push(client.query(queryUserRole));
+    }
+
+    // 2) Tester si le role petowner existe déjà
+    if (userBeforeSave.role_names.includes('petowner')) {
+      // debug('userBeforeChangeRole.includes("petowner")');
+
+      // Si oui, et que le nouveau role est false, on le supprime
+      if (role_petowner === 'false') {
+        // debug('role_petowner === "false"');
+        const queryUserRole = {
+          text: `
+            DELETE FROM "user_has_role"
+            WHERE "user_id" = $1
+            AND "role_id" = 2
+          `,
+          values: [userId],
+        };
+
+        promises.push(client.query(queryUserRole));
+      }
+    } else {
+      // 2bis) Sinon (role petowner est absent de role_names)
+      // et si role_petowner est true
+      const queryUserRole = {
+        text: `
+          INSERT INTO "user_has_role"("user_id", "role_id")
+          VALUES ($1, 2)
+          RETURNING *;
+        `,
+        values: [userId],
+      };
+
+      promises.push(client.query(queryUserRole));
+    }
+
+    await Promise.all(promises);
+
+    // ---------
+    // ---------
+    // ---------
+
+    const userAfterSave = await userDataMapper.findUserById(userId);
+    // debug('userAfterSave', userAfterSave);
+
+    return userAfterSave;
   },
 };
 

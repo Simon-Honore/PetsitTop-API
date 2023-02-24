@@ -19,7 +19,7 @@ const schemas = {
       .integer()
       .required(),
   }).required(),
-  //   patch: Joi.object({
+  //   put: Joi.object({
 
 //   }).required(),
 };

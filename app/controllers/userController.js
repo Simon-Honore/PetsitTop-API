@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 const debug = require('debug')('opet:userController');
 const bcrypt = require('bcrypt');
 
@@ -49,6 +50,32 @@ const userController = {
 
     // debug(user);
     return response.status(201).json(user);
+  },
+
+  async modifyUser(request, response, next) {
+    debug('modifyUser');
+    const { id } = request.params;
+
+    // Etat actuel de l'user (avant modification)
+    const userBeforeSave = await userDataMapper.findUserWithRoleById(id);
+
+    // Si la modification de l'user n'a aucun role, on renvoie une erreur
+    const { role_petsitter, role_petowner } = request.body;
+    if
+    (
+      (role_petsitter === 'false' && role_petowner === 'false')
+      && (userBeforeSave.role_names.includes('petowner') || userBeforeSave.role_names.includes('petsitter'))
+    ) {
+      const error = { statusCode: 400, message: 'Au moins un rôle est requis' };
+      return next(error);
+    }
+
+    // On modifie l'user avec les nouvelles données
+    const user = await userDataMapper.modifyUser(id, request.body, userBeforeSave);
+
+    debug(user);
+
+    return response.status(200).json(user);
   },
 
 };

@@ -12,7 +12,6 @@ CREATE DOMAIN postal_code_fr AS TEXT
   OR value ~ '^2[1-9]\d{3}$' -- code postaux du 21 au 29
   OR value ~ '^[3-8]\d{4}$' -- code postaux du 30 au 89
   OR value ~ '^9[0-5]\d{3}$' -- code postaux du 90 au 95
-  OR value ~ '^9[78]\d{3}$' -- code postaux du 97 au 98
 );
 
 
