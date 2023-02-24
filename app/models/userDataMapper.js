@@ -73,35 +73,25 @@ const userDataMapper = {
     return results.rows;
   },
 
-  // (
-  //   SELECT ARRAY_AGG("role"."name") AS "role_names"
-  //   FROM "role"
-  //   WHERE "role"."id" IN
-  //   (
-  //     SELECT "role_id"
-  //     FROM "user_has_role"
-  //     WHERE "user_has_role"."user_id"="user"."id"
-  //   )
-  // )
-  findPetsByUserId: async (id) => {
-    debug('findPetsByUserId');
-    debug('id', id);
-    const query = {
-      text: `
-        SELECT
-          "pet"."id",
-          "pet"."name",
-          "pet"."presentation",
-          "pet_type"."name" AS "pet_type"
-        FROM "pet" 
-        JOIN "pet_type" ON "pet"."pet_type_id"="pet_type"."id"       
-        WHERE "pet"."user_id" = $1;
-      `,
-      values: [id],
-    };
-    const results = await client.query(query);
-    return results.rows; // retourne un tableau contenant des objets (chaque pet = un objet)
-  },
+  // findPetsByUserId: async (id) => {
+  //   debug('findPetsByUserId');
+  //   debug('id', id);
+  //   const query = {
+  //     text: `
+  //       SELECT
+  //         "pet"."id",
+  //         "pet"."name",
+  //         "pet"."presentation",
+  //         "pet_type"."name" AS "pet_type"
+  //       FROM "pet"
+  //       JOIN "pet_type" ON "pet"."pet_type_id"="pet_type"."id"
+  //       WHERE "pet"."user_id" = $1;
+  //     `,
+  //     values: [id],
+  //   };
+  //   const results = await client.query(query);
+  //   return results.rows; // retourne un tableau contenant des objets (chaque pet = un objet)
+  // },
 
   findAdsByUserId: async (id) => {
     debug('findAdsByUserId');
@@ -142,39 +132,35 @@ const userDataMapper = {
     debug('id', id);
     const query = {
       text: `
-        SELECT 
-          "user".*,
-          ARRAY_AGG(DISTINCT "pet_type"."name" ORDER BY "pet_type"."name" DESC) AS "pet_types",
-          ARRAY_AGG(DISTINCT "role"."name") AS "role_names",
-          ARRAY_AGG(DISTINCT "pet"."id") AS "pets",
-          ARRAY_AGG(DISTINCT "ad"."id") AS "ads"
-        FROM
-          "user"
-        LEFT JOIN "user_has_pet_type" ON "user"."id"="user_has_pet_type"."user_id"
-        LEFT JOIN "pet_type" ON "user_has_pet_type"."pet_type_id"="pet_type"."id"
-        LEFT JOIN "user_has_role" ON "user"."id"="user_has_role"."user_id"
-        LEFT JOIN "role" ON "user_has_role"."role_id"="role"."id"
-        LEFT JOIN "pet" ON "pet"."user_id" = "user"."id"
-        LEFT JOIN "ad" ON "ad"."user_id" = "user"."id"
-        WHERE 
+      SELECT 
+        "user".*,
+        jsonb_agg(DISTINCT jsonb_build_object('id', "role"."id",'name', "role"."name")) AS "roles",
+        COALESCE(jsonb_agg(DISTINCT jsonb_build_object('id', "pet_type_to_petsit"."id",'name', "pet_type_to_petsit"."name")) FILTER (WHERE "pet_type_to_petsit"."id" IS NOT NULL), '[]') AS "pet_types",
+        COALESCE(jsonb_agg(DISTINCT jsonb_build_object('id', "pet"."id",'name', "pet"."name", 'presentation', "pet"."presentation", 'pet_type', "pet_type_qualify"."name")) FILTER (WHERE "pet"."id" IS NOT NULL), '[]') AS "pets",
+        COALESCE(jsonb_agg(DISTINCT jsonb_build_object('id', "ad"."id",'title', "ad"."title", 'content', "ad"."content", 'city', "ad"."city", 'postal_code', "ad"."postal_code")) FILTER (WHERE "ad"."id" IS NOT NULL), '[]') AS "ads"
+      
+      FROM
+        "user"
+      
+      LEFT JOIN "user_has_pet_type" ON "user"."id"="user_has_pet_type"."user_id"
+      LEFT JOIN "pet_type" AS "pet_type_to_petsit" ON "user_has_pet_type"."pet_type_id"= "pet_type_to_petsit"."id"
+      LEFT JOIN "user_has_role" ON "user"."id"="user_has_role"."user_id"
+      LEFT JOIN "role" ON "user_has_role"."role_id"="role"."id"
+      LEFT JOIN "pet" ON "pet"."user_id" = "user"."id"
+      LEFT JOIN "pet_type" AS "pet_type_qualify" ON "pet"."pet_type_id"= "pet_type_qualify"."id"       
+      LEFT JOIN "ad" ON "ad"."user_id" = "user"."id"
+      
+      WHERE 
           "user"."id" = $1
-        GROUP BY "user"."id";
+      
+      GROUP BY "user"."id";
       `,
       values: [id],
     };
     const results = await client.query(query);
+    debug(results.rows[0]);
 
-    const resultRows = results.rows[0];
-
-    // Ajout Pets (dans une propriété "pets" qui contient un tableau avec le détail de chaque "pet")
-    const petsList = await userDataMapper.findPetsByUserId(id);
-    resultRows.pets = petsList;
-
-    // Ajout Ads
-    const adsList = await userDataMapper.findAdsByUserId(id);
-    resultRows.ads = adsList;
-
-    return resultRows;
+    return results.rows[0];
   },
 
   findUserWithRoleById: async (id) => {
