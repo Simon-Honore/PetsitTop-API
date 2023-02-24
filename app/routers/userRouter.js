@@ -9,9 +9,11 @@ const { post: userPostSchema } = require('../validations/schemas/user.schema');
 const { get: userGetSchema } = require('../validations/schemas/user.schema');
 const { put: userPutSchema } = require('../validations/schemas/user.schema');
 
+const authenticateToken = require('../middlewares/authenticateToken');
+
 // User routes
-userRouter.get('/users/:id([0-9]+)', controllerHandler(userController.getOneUser));
-userRouter.put('/users/:id([0-9]+)', validate(userPutSchema, 'body'), controllerHandler(userController.modifyUser));
+userRouter.get('/users/:id([0-9]+)', authenticateToken, controllerHandler(userController.getOneUser));
+userRouter.put('/users/:id([0-9]+)', authenticateToken, validate(userPutSchema, 'body'), controllerHandler(userController.modifyUser));
 userRouter.get('/users', validate(userGetSchema, 'query'), controllerHandler(userController.getSearchResults));
 userRouter.post('/users', validate(userPostSchema, 'body'), controllerHandler(userController.createUser));
 

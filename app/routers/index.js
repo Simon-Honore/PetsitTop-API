@@ -6,7 +6,11 @@ const userRouter = require('./userRouter');
 const petRouter = require('./petRouter');
 const adRouter = require('./adRouter');
 
+const controllerHandler = require('../controllers/controllerHandler');
 const opetErrorController = require('../controllers/errorController');
+const authController = require('../controllers/authController');
+
+mainRouter.post('/login', controllerHandler(authController.checkToken));
 
 // mainRouter.use('/users', userRouter);
 mainRouter.use(userRouter);
