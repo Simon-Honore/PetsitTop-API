@@ -70,7 +70,7 @@ const schemas = {
       .boolean()
       .required(),
   }).required(),
-  patch: Joi.object({
+  put: Joi.object({
     first_name: Joi
       .string()
       .pattern(/^[a-zA-ZÀ-ÿ '-]{2,}$/)
