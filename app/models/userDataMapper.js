@@ -318,6 +318,10 @@ const userDataMapper = {
     const { id: userId } = results.rows[0];
     // debug('userId', userId);
 
+    // ---------IDEALEMENT : REFACTO DE CE QUI SUIT DANS UNE AUTRE FONCTION
+    // ---------PAR EXEMPLE "modifyUserHasRole"
+    //---------
+
     // Promesses pour les requêtes asynchrones
     const promises = [];
 
@@ -388,6 +392,10 @@ const userDataMapper = {
     }
 
     await Promise.all(promises);
+
+    // ---------
+    // ---------
+    // ---------
 
     const userAfterSave = await userDataMapper.findUserById(userId);
     // debug('userAfterSave', userAfterSave);
