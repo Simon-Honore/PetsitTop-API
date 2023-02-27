@@ -9,30 +9,73 @@ const adController = {
     const ads = await adDataMapper.findAllAds();
     response.status(200).json(ads);
   },
-  async getAdsByUserId(request, response) {
+  async getAdsByUserId(request, response, next) {
     debug('getAdsByUserId');
     const { id } = request.params;
+
+    // Test if the user exists
+    const isExistingUser = await userDataMapper.findUserById(id);
+
+    // If the user does not exist, we return an error 404
+    if (!isExistingUser) {
+      debug(`Ad ${id} does not exists`);
+      const error = { statusCode: 404, message: 'User does not exists' };
+      return next(error);
+    }
     const ads = await adDataMapper.findAdsByUserId(id);
-    response.status(200).json(ads);
+    return response.status(200).json(ads);
   },
   async createAdByUserId(request, response, next) {
     debug('createAd');
     const { body } = request; // données de l'annonce
     const { id } = request.params; // id de l'utilisateur
 
-    // Test si l'utilisateur existe
-    const isExistingUser = await userDataMapper.findUserById(id);
-
-    // Si l'utilisateur n'existe pas, on renvoie une erreur
-    if (!isExistingUser) {
-      return next(new Error('User does not exist'));
+    // Test if the user has the right to access this route
+    const loggedInUser = request.user;
+    if (Number(id) !== loggedInUser.id) {
+      const error = { statusCode: 401, message: 'Unauthorized' };
+      return next(error);
     }
 
-    // Si l'utilisateur existe, on crée l'annonce
+    // Test if the user exists
+    const isExistingUser = await userDataMapper.findUserById(id);
+
+    // If the user does not exist, we return an error 404
+    if (!isExistingUser) {
+      debug(`Ad ${id} does not exists`);
+      const error = { statusCode: 404, message: 'User does not exists' };
+      return next(error);
+    }
+
+    // If the user exists, we create the ad
     const ad = await adDataMapper.createAdByUserId(body, id);
 
     // Réponse
     return response.status(201).json(ad);
+  },
+  async deleteAdById(request, response, next) {
+    debug('deleteAdById');
+    const { id } = request.params; // id of the ad
+
+    // Test if the user has the right to access this route
+    const loggedInUser = request.user;
+    if (Number(id) !== loggedInUser.id) {
+      const error = { statusCode: 401, message: 'Unauthorized' };
+      return next(error);
+    }
+
+    // If the ad does not exist, we return an error 404
+    const isExistingAd = await adDataMapper.findAdById(id);
+    if (!isExistingAd) {
+      debug(`Ad ${id} does not exists`);
+      return next();
+    }
+
+    // Delete the ad
+    await adDataMapper.deleteAdById(id);
+
+    // Response
+    return response.status(204).send();
   },
 };
 

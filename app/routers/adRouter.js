@@ -12,5 +12,6 @@ const authenticateToken = require('../middlewares/authenticateToken');
 adRouter.get('/user/:id([0-9]+)/ads', authenticateToken, controllerHandler(adController.getAdsByUserId));
 adRouter.post('/user/:id([0-9]+)/ads', authenticateToken, validate(adPostSchema, 'body'), controllerHandler(adController.createAdByUserId));
 adRouter.get('/ads', authenticateToken, controllerHandler(adController.getAllAds));
+adRouter.delete('/ads/:id([0-9]+)', authenticateToken, controllerHandler(adController.deleteAdById));
 
 module.exports = adRouter;
