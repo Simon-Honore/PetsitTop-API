@@ -53,6 +53,22 @@ const adDataMapper = {
     return results.rows[0];
   },
 
+  // Update ad by id
+  updateAdById: async (id, updateAdObj) => {
+    debug(`updateAdById(${id})`);
+    debug('updateAdObj', updateAdObj);
+
+    const query = {
+      text: `
+        SELECT * FROM update_ad($1);
+      `,
+      values: [{ ...updateAdObj, id }],
+    };
+
+    const results = await client.query(query);
+    return results.rows[0];
+  },
+
   // Delete ad by id
   deleteAdById: async (id) => {
     debug(`deleteAdById(${id})`);

@@ -2,6 +2,6 @@
 
 BEGIN;
 
-DROP FUNCTION "new_ad";
+DROP FUNCTION "new_ad", "update_ad";
 
 COMMIT;
