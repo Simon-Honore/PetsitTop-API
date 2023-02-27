@@ -2,6 +2,6 @@
 
 BEGIN;
 
-DROP FUNCTION "new_pet";
+DROP FUNCTION "new_pet","update_pet";
 
 COMMIT;

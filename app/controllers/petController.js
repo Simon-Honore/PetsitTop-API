@@ -27,6 +27,66 @@ const petController = {
     const pet = await petDataMapper.createPetForUser(id, request.body);
     return response.status(201).json(pet);
   },
+
+  async modifyPet(request, response, next) {
+    debug('modifyPet');
+
+    const { id } = request.params;
+
+    // check if Pet exists in DB
+    const petExists = await petDataMapper.findPetById(id);
+    // if not => error
+    if (!petExists) {
+      const error = { statusCode: 404, message: 'Pet does not exist' };
+      return next(error);
+    }
+
+    // if pet exists then check if logged in user owns the pet:
+    const loggedInUser = request.user;
+    const petsOfLoggedInUser = await petDataMapper.findAllPetsByUserId(loggedInUser.id);
+    debug('user pets list :', petsOfLoggedInUser);
+    // check if id (from the route) matches the id of the pets from the user's list
+    const foundPet = petsOfLoggedInUser.find((pet) => pet.id === Number(id));
+    debug('foundPet', foundPet);
+    if (!foundPet) {
+      const error = { statusCode: 401, message: 'Unauthorized' };
+      return next(error);
+    }
+
+    // if pet exists and logged in user owns the pet then we can modify it:
+    const pet = await petDataMapper.modifyPetFromId(id, request.body);
+    return response.status(200).json(pet);
+  },
+
+  async deletePet(request, response, next) {
+    debug('deletePet');
+
+    const { id } = request.params;
+
+    // check if Pet exists in DB
+    const petExists = await petDataMapper.findPetById(id);
+    // if not => error
+    if (!petExists) {
+      const error = { statusCode: 404, message: 'Pet does not exist' };
+      return next(error);
+    }
+
+    // if pet exists then check if logged in user owns the pet:
+    const loggedInUser = request.user;
+    const petsOfLoggedInUser = await petDataMapper.findAllPetsByUserId(loggedInUser.id);
+    debug('user pets list :', petsOfLoggedInUser);
+    // check if id (from the route) matches the id of the pets from the user's list
+    const foundPet = petsOfLoggedInUser.find((pet) => pet.id === Number(id));
+    debug('foundPet', foundPet);
+    if (!foundPet) {
+      const error = { statusCode: 401, message: 'Unauthorized' };
+      return next(error);
+    }
+
+    // if pet exists and loggedin user owns it then we can delete it :
+    await petDataMapper.deletePetFromId(id);
+    return response.status(204).send();
+  },
 };
 
 module.exports = petController;
