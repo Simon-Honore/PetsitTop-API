@@ -10,10 +10,11 @@ const schemas = {
       .string()
       .max(250)
       .allow(''),
-    user_id: Joi
-      .number()
-      .integer()
-      .required(),
+    // user_id: Joi : on ne peut pas le laisser car on fait
+    // la validtion du body mais user_id est récupéré de req.params et non req.body
+    //   .number()
+    //   .integer()
+    //   .required(),
     pet_type_id: Joi
       .number()
       .integer()

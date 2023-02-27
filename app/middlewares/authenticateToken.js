@@ -12,14 +12,17 @@ module.exports = function authenticateToken(request, response, next) {
     const error = { statusCode: 401, message: 'Invalid credentials' };
     return next(error);
   }
+
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
     debug('jwt.verify');
     if (err) {
       const error = { statusCode: 401, message: 'Invalid credentials' };
       return next(error);
     }
+
     request.user = user;
     debug('request.user', request.user);
+
     return next();
   });
 };
