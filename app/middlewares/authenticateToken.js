@@ -2,7 +2,7 @@ const debug = require('debug')('opet:authenticateToken');
 const jwt = require('jsonwebtoken'); // Json Web Tokens for authentification
 
 // eslint-disable-next-line consistent-return
-module.exports = async function authenticateToken(request, response, next) {
+module.exports = function authenticateToken(request, response, next) {
   debug('authenticateToken');
   const authHeader = request.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
