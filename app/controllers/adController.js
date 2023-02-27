@@ -42,7 +42,7 @@ const adController = {
 
     // If the user does not exist, we return an error 404
     if (!isExistingUser) {
-      debug(`Ad ${id} does not exists`);
+      debug(`User ${id} does not exists`);
       const error = { statusCode: 404, message: 'User does not exists' };
       return next(error);
     }
@@ -52,6 +52,32 @@ const adController = {
 
     // Réponse
     return response.status(201).json(ad);
+  },
+  async updateAdById(request, response, next) {
+    debug('updateAdById');
+    const { id } = request.params; // id of the ad
+    const { body } = request; // data of the ad
+
+    // Test if the user has the right to access this route
+    const loggedInUser = request.user;
+    if (Number(id) !== loggedInUser.id) {
+      const error = { statusCode: 401, message: 'Unauthorized' };
+      return next(error);
+    }
+
+    // Test if the ad exists
+    const isExistingAd = await adDataMapper.findAdById(id);
+    if (!isExistingAd) {
+      debug(`Ad ${id} does not exists`);
+      const error = { statusCode: 404, message: 'Ad does not exists' };
+      return next(error);
+    }
+
+    // If the ad exists and the user has the right to access, we update it with the new data
+    const ad = await adDataMapper.updateAdById(id, body);
+
+    // Response
+    return response.status(200).json(ad);
   },
   async deleteAdById(request, response, next) {
     debug('deleteAdById');
