@@ -69,6 +69,20 @@ const petDataMapper = {
     return results.rows[0];
   },
 
+  async deletePetFromId(petId) {
+    debug('deletePetFromId');
+    debug('petId :', petId);
+
+    const query = {
+      text: `
+        DELETE FROM "pet" WHERE "id"=$1;
+        `,
+      values: [petId],
+    };
+
+    await client.query(query);
+  },
+
 };
 
 module.exports = petDataMapper;

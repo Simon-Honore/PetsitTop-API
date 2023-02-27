@@ -45,6 +45,24 @@ const petController = {
     const pet = await petDataMapper.modifyPetFromId(id, request.body);
     return response.status(200).json(pet);
   },
+
+  async deletePet(request, response, next) {
+    debug('deletePet');
+
+    const { id } = request.params;
+
+    // check if Pet exists in DB
+    const petExists = await petDataMapper.findPetById(id);
+    // if not => error
+    if (!petExists) {
+      const error = { statusCode: 404, message: 'Pet does not exist' };
+      return next(error);
+    }
+
+    // if pet exists then we can delete it :
+    await petDataMapper.deletePetFromId(id);
+    return response.status(204).send();
+  },
 };
 
 module.exports = petController;
