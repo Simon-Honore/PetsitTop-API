@@ -27,6 +27,24 @@ const petController = {
     const pet = await petDataMapper.createPetForUser(id, request.body);
     return response.status(201).json(pet);
   },
+
+  async modifyPet(request, response, next) {
+    debug('modifyPet');
+
+    const { id } = request.params;
+
+    // check if Pet exists in DB
+    const petExists = await petDataMapper.findPetById(id);
+    // if not => error
+    if (!petExists) {
+      const error = { statusCode: 404, message: 'Pet does not exist' };
+      return next(error);
+    }
+
+    // if pet exists then we can modify it :
+    const pet = await petDataMapper.modifyPetFromId(id, request.body);
+    return response.status(200).json(pet);
+  },
 };
 
 module.exports = petController;

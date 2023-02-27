@@ -38,7 +38,8 @@ CREATE OR REPLACE FUNCTION update_userwithemail(user_data json) RETURNS "user" A
     "city" = user_data->>'city',
     "presentation" = user_data->>'presentation',
     "availability" = (user_data->>'availability')::boolean,
-    "availability_details" = user_data->>'availability_details'
+    "availability_details" = user_data->>'availability_details',
+    "updated_at" = now()
   WHERE "id" = (user_data->>'id')::int
   RETURNING *;
 
@@ -53,7 +54,8 @@ CREATE OR REPLACE FUNCTION update_user(user_data json) RETURNS "user" AS $$
     "city" = user_data->>'city',
     "presentation" = user_data->>'presentation',
     "availability" = (user_data->>'availability')::boolean,
-    "availability_details" = user_data->>'availability_details'
+    "availability_details" = user_data->>'availability_details',
+    "updated_at" = now()
   WHERE "id" = (user_data->>'id')::int
   RETURNING *;
 
