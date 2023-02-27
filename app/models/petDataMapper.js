@@ -18,6 +18,21 @@ const petDataMapper = {
     return results.rows[0];
   },
 
+  async findAllPetsByUserId(userId) {
+    debug('findAllPetsByUserId');
+    debug('userId :', userId);
+
+    const query = {
+      text: `
+        SELECT * FROM "pet" WHERE "user_id"=$1;
+        `,
+      values: [userId],
+    };
+
+    const results = await client.query(query);
+    return results.rows;
+  },
+
   async createPetForUser(userId, petObj) {
     debug('createPetForUser');
     debug('userId :', userId);
