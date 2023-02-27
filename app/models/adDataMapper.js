@@ -3,6 +3,15 @@ const debug = require('debug')('opet:adDataMapper');
 const client = require('./database');
 
 const adDataMapper = {
+  findAllAds: async () => {
+    const query = {
+      text: `
+        SELECT * FROM "ad"
+      `,
+    };
+    const results = await client.query(query);
+    return results.rows;
+  },
   findAdsByUserId: async (id) => {
     debug('findAdsByUserId');
     const query = {
