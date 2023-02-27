@@ -8,9 +8,6 @@ const controllerHandler = require('../controllers/controllerHandler');
 const validate = require('../validations/validator');
 const { post: petPostSchema } = require('../validations/schemas/pet.schema');
 
-petRouter.post('/user/:id([0-9]+)/pets', validate(petPostSchema, 'body'), authenticateToken, controllerHandler(petController.addPet));
-
-// Route sans authent pour tests insomnia plus simples :
-// petRouter.post('/user/:id([0-9]+)/pets', validate(petPostSchema, 'body'), controllerHandler(petController.addPet));
+petRouter.post('/user/:id([0-9]+)/pets', authenticateToken, validate(petPostSchema, 'body'), controllerHandler(petController.addPet));
 
 module.exports = petRouter;
