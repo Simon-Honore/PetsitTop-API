@@ -4,6 +4,11 @@ const adDataMapper = require('../models/adDataMapper');
 const userDataMapper = require('../models/userDataMapper');
 
 const adController = {
+  async getAllAds(request, response) {
+    debug('getAllAds');
+    const ads = await adDataMapper.findAllAds();
+    response.status(200).json(ads);
+  },
   async getAdsByUserId(request, response) {
     debug('getAdsByUserId');
     const { id } = request.params;
