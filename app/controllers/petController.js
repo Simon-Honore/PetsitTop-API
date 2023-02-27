@@ -41,7 +41,19 @@ const petController = {
       return next(error);
     }
 
-    // if logged in user owns the pet then we can modify it:
+    // if pet exists then check if logged in user owns the pet:
+    const loggedInUser = request.user;
+    const petsOfLoggedInUser = await petDataMapper.findAllPetsByUserId(loggedInUser.id);
+    debug('user pets list :', petsOfLoggedInUser);
+    // check if id (from the route) matches the id of the pets from the user's list
+    const foundPet = petsOfLoggedInUser.find((pet) => pet.id === Number(id));
+    debug('foundPet', foundPet);
+    if (!foundPet) {
+      const error = { statusCode: 401, message: 'Unauthorized' };
+      return next(error);
+    }
+
+    // if pet exists and logged in user owns the pet then we can modify it:
     const pet = await petDataMapper.modifyPetFromId(id, request.body);
     return response.status(200).json(pet);
   },
