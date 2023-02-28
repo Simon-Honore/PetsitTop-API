@@ -10,10 +10,94 @@ const { put: adPutSchema } = require('../validations/schemas/ad.schema');
 
 const authenticateToken = require('../middlewares/authenticateToken');
 
+/** a Ad type
+ * @typedef {object} Ad
+ * @property {number} id - ad id
+ * @property {string} title - ad title
+ * @property {string} content - ad content
+ * @property {string} city - ad city
+ * @property {string} postal_code - ad postal code
+ * @property {number} user_id - user id
+ * @property {string} created_at - ad creation date
+ * @property {string} updated_at - ad update date
+ */
+
+/** a create/modify Ad type
+ * @typedef {object} AdCreateModify
+ * @property {string} title - ad title
+ * @property {string} content - ad content
+ * @property {string} city - ad city
+ * @property {string} postal_code - ad postal code
+ */
+
+/**
+ * GET /user/{id}/ads
+ *
+ * @summary get all ads by user id
+ * @tags Ads
+ *
+ * @param {number} id.path - user id
+ *
+ * @return {array<Ad>} 200 - success response
+ * @return {object} 500 - internal server error
+ * @return {object} 401 - unauthorized
+ *
+ * @security BearerAuth
+ */
 adRouter.get('/user/:id([0-9]+)/ads', authenticateToken, controllerHandler(adController.getAdsByUserId));
+
+/**
+ * POST /user/{id}/ads
+ *
+ * @summary create a new ad for one user
+ * @tags Ads
+ *
+ * @param {number} id.path - user id
+ * @param {Ad} request.body - ad
+ *
+ * @return {AdCreateModify} 201 - success response
+ * @return {object} 500 - internal server error
+ *
+ * @security BearerAuth
+ */
 adRouter.post('/user/:id([0-9]+)/ads', authenticateToken, validate(adPostSchema, 'body'), controllerHandler(adController.createAdByUserId));
+
+/**
+ * GET /ads
+ *
+ * @summary get all ads
+ * @tags Ads
+ *
+ * @return {array<Ad>} 200 - success response
+ * @return {object} 500 - internal server error
+ */
 adRouter.get('/ads', authenticateToken, controllerHandler(adController.getAllAds));
+
+/**
+ * PUT /ads/{id}
+ *
+ * @summary modify an ad
+ * @tags Ads
+ *
+ * @param {number} id.path - ad id
+ * @param {Ad} request.body - post
+ *
+ * @return {AdCreateModify} 200 - success response
+ * @return {object} 500 - internal server error
+ */
 adRouter.put('/ads/:id([0-9]+)', authenticateToken, validate(adPutSchema, 'body'), controllerHandler(adController.updateAdById));
+
+/**
+ * DELETE /ads/{id}
+ *
+ * @summary delete an ad
+ * @tags Ads
+ *
+ * @param {number} id.path - ad id
+ *
+ * @return {object} 204 - success response
+ * @return {object} 500 - internal server error
+ */
 adRouter.delete('/ads/:id([0-9]+)', authenticateToken, controllerHandler(adController.deleteAdById));
 
 module.exports = adRouter;
