@@ -28,7 +28,7 @@ const authController = {
     // if user exists and email+password match => generate token
     const accessToken = authController.generateAccessToken(user);
     debug('token :', accessToken);
-    return response.send({ accessToken });
+    return response.send({ accessToken, userId: user.id, logged: true });
   },
 
   generateAccessToken(user) {
