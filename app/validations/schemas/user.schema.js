@@ -46,6 +46,7 @@ const schemas = {
     confirmPassword: Joi
       .string()
       .required()
+      // "confirmPassword" must match "password"
       .valid(Joi.ref('password')),
     postal_code: Joi
       .string()
@@ -69,7 +70,10 @@ const schemas = {
     role_petowner: Joi
       .boolean()
       .required(),
-    pet_type: Joi.array(),
+    pet_type: Joi
+      .array()
+      .items(Joi.string())
+      .required(),
   }).required(),
   put: Joi.object({
     first_name: Joi
@@ -111,6 +115,10 @@ const schemas = {
       .required(),
     role_petowner: Joi
       .boolean()
+      .required(),
+    pet_type: Joi
+      .array()
+      .items(Joi.string())
       .required(),
   }).required(),
 };

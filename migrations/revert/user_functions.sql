@@ -2,6 +2,7 @@
 
 BEGIN;
 
-DROP FUNCTION "new_user","new_user_has_role", "update_user", "update_userwithemail", "new_user_has_pet_type" ;
+DROP FUNCTION
+"new_user","new_user_has_role", "update_user", "update_userwithemail", "new_user_has_pet_type", "delete_user_has_pet_type" ;
 
 COMMIT;

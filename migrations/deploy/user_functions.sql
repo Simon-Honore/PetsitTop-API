@@ -38,8 +38,7 @@ RETURNS SETOF "user_has_pet_type" AS $$
       RETURN QUERY
         INSERT INTO "user_has_pet_type" ("user_id", "pet_type_id")
         VALUES (user_id_data, x)
-        RETURNING *;
-        
+        RETURNING *;  
     END LOOP;
     RETURN;
 
@@ -78,5 +77,19 @@ CREATE OR REPLACE FUNCTION update_user(user_data json) RETURNS "user" AS $$
   RETURNING *;
 
 $$ LANGUAGE sql STRICT;
+
+    CREATE OR REPLACE FUNCTION delete_user_has_pet_type(user_id_data int, pet_type_data int[])
+    RETURNS VOID AS $$
+      DECLARE
+        x int;
+      BEGIN
+        FOREACH x IN ARRAY pet_type_data
+        LOOP
+          DELETE FROM "user_has_pet_type"
+          WHERE "user_id" = "user_id_data" AND "pet_type_id" = x;
+        END LOOP;
+        RETURN;
+      END;
+    $$ LANGUAGE plpgsql STRICT;
 
 COMMIT;

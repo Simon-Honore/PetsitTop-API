@@ -72,8 +72,8 @@ const userController = {
     }
 
     // Etat actuel de l'user (avant modification)
-    const userBeforeSave = await userDataMapper.findUserWithRoleById(id);
-
+    const userBeforeSave = await userDataMapper.findUserWithRoleAndPetTypeById(id);
+    debug('userbeforeSave :', userBeforeSave);
     // Si la modification de l'user n'a aucun role, on renvoie une erreur
     const { role_petsitter, role_petowner } = request.body;
     if
