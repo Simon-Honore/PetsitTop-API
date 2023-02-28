@@ -34,7 +34,8 @@ const schemas = {
       .email({
         // the TLD (top level domain) must be a valid name listed on the IANA registry:
         tlds: { allow: true },
-      }),
+      })
+      .required(),
     password: Joi
       .string()
       .min(8)
@@ -89,7 +90,8 @@ const schemas = {
       .email({
         // the TLD (top level domain) must be a valid name listed on the IANA registry:
         tlds: { allow: true },
-      }),
+      })
+      .required(),
     postal_code: Joi
       .string()
       // regex from our SQl DOMAIN "postal_code_fr" in DB
