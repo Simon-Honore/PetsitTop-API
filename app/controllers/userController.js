@@ -22,7 +22,14 @@ const userController = {
     debug('getOneUser');
     const searchedId = Number(request.params.id);
 
-    const user = await userDataMapper.findUserById(searchedId);
+    let user = await userDataMapper.findUserById(searchedId);
+
+    // Si l'user est connecté, on ajoute une propriété isOwner à l'objet user
+    const loggedInUser = request.user;
+    debug('loggedInUser :', loggedInUser);
+    if (Number(searchedId) === loggedInUser.id) {
+      user = { ...user, isOwner: true };
+    }
     response.status(200).json(user);
   },
 
@@ -55,6 +62,14 @@ const userController = {
   async modifyUser(request, response, next) {
     debug('modifyUser');
     const { id } = request.params;
+
+    // Test si l'user a le droit d'accéder à cette route
+    const loggedInUser = request.user;
+    debug('loggedInUser :', loggedInUser);
+    if (Number(id) !== loggedInUser.id) {
+      const error = { statusCode: 401, message: 'Unauthorized' };
+      return next(error);
+    }
 
     // Etat actuel de l'user (avant modification)
     const userBeforeSave = await userDataMapper.findUserWithRoleById(id);
