@@ -3,10 +3,25 @@ const debug = require('debug')('opet:server'); // to log debug messages
 require('dotenv').config(); // variables d'environnement
 const express = require('express'); // express
 const cors = require('cors'); // cors
+const expressSwagger = require('express-jsdoc-swagger');
+const path = require('path');
 
 const router = require('./app/routers'); // router
 
 const app = express();
+
+const swaggerOptions = {
+  info: {
+    version: '1.0.0',
+    title: 'Petsitter Friendly',
+  },
+  baseDir: path.join(__dirname, 'app'),
+  filesPattern: './**/*.js',
+  swaggerUIPath: '/api-docs',
+};
+
+expressSwagger(app)(swaggerOptions);
+
 const PORT = process.env.PORT || 3000;
 
 // Body Parser
