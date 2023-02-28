@@ -28,6 +28,23 @@ CREATE OR REPLACE FUNCTION new_user_has_role(user_has_role_data json) RETURNS "u
   RETURNING *;
 $$ LANGUAGE sql STRICT;
 
+CREATE OR REPLACE FUNCTION new_user_has_pet_type(user_id_data int, pet_type_data int[])
+RETURNS SETOF "user_has_pet_type" AS $$
+  DECLARE
+    x int;
+  BEGIN
+    FOREACH x IN ARRAY pet_type_data
+    LOOP
+      RETURN QUERY
+        INSERT INTO "user_has_pet_type" ("user_id", "pet_type_id")
+        VALUES (user_id_data, x)
+        RETURNING *;  
+    END LOOP;
+    RETURN;
+
+  END;
+$$ LANGUAGE plpgsql STRICT;
+
 -- Function to modify a user with email
 CREATE OR REPLACE FUNCTION update_userwithemail(user_data json) RETURNS "user" AS $$
   UPDATE "user" SET
@@ -60,5 +77,19 @@ CREATE OR REPLACE FUNCTION update_user(user_data json) RETURNS "user" AS $$
   RETURNING *;
 
 $$ LANGUAGE sql STRICT;
+
+    CREATE OR REPLACE FUNCTION delete_user_has_pet_type(user_id_data int, pet_type_data int[])
+    RETURNS VOID AS $$
+      DECLARE
+        x int;
+      BEGIN
+        FOREACH x IN ARRAY pet_type_data
+        LOOP
+          DELETE FROM "user_has_pet_type"
+          WHERE "user_id" = "user_id_data" AND "pet_type_id" = x;
+        END LOOP;
+        RETURN;
+      END;
+    $$ LANGUAGE plpgsql STRICT;
 
 COMMIT;

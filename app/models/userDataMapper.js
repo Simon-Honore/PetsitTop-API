@@ -163,17 +163,19 @@ const userDataMapper = {
     return results.rows[0];
   },
 
-  findUserWithRoleById: async (id) => {
-    debug('findUserSimpleById');
+  findUserWithRoleAndPetTypeById: async (id) => {
+    debug('findUserWithRoleAndPetTypeById');
     debug('id', id);
     const query = {
       text: `
         SELECT
           "user".*,
-          ARRAY_AGG(DISTINCT "role"."name") AS "role_names"
+          ARRAY_AGG(DISTINCT "role"."name") AS "role_names",
+          ARRAY_AGG(DISTINCT "user_has_pet_type"."pet_type_id") AS "pet_types_ids"
         FROM "user"
         LEFT JOIN "user_has_role" ON "user"."id"="user_has_role"."user_id"
         LEFT JOIN "role" ON "user_has_role"."role_id"="role"."id"
+        LEFT JOIN "user_has_pet_type" ON "user"."id"="user_has_pet_type"."user_id"
         WHERE 
           "user"."id" = $1
         GROUP BY "user"."id";
@@ -190,9 +192,11 @@ const userDataMapper = {
     debug('createObj', createObj);
     debug('createUser');
 
-    // A partir de l'objet "createObj"(=request.body), je récupère role_petsitter et role_petsitter
-    // et création nouvel objet "createObj2" qui comporte les autres propriétés pour la table user
-    const { role_petsitter, role_petowner, ...createObj2 } = createObj;
+    // we extract "role_petsitter" + "role_petowner" + array "pet_type" from createObj(req.body)
+    // we create "createObj2" with all the other properties that can be inserted in "user" table
+    const {
+      role_petsitter, role_petowner, pet_type, ...createObj2
+    } = createObj;
 
     // Insertion de l'user dans la table "user"
     const queryUser = {
@@ -204,13 +208,13 @@ const userDataMapper = {
     // debug('query', query);
     const results = await client.query(queryUser);
 
-    // Insertion du role dans la table "user_has_role" :
-    // un enregistrement si role petsitter, 1 enregistrement si role petowner
+    // Insert roles into table "user_has_role" :
+    // 1 insert if role petsitter and/or 1 insert if role petowner
 
-    // on récupère l'id du user qu'on vient d'insérer en table "user" :
+    // we get the id of the user we just inserted in table "user" :
     const { id: userId } = results.rows[0];
 
-    // Par défaut le role est petowner
+    // default role is petowner
     const userRoleObj = { user_id: userId, role_id: 2 };
 
     const queryUserRole = {
@@ -221,6 +225,7 @@ const userDataMapper = {
     };
 
     const resultsRow = results.rows[0];
+    // we add a "roles" property to the user we'll return (array of the role or roles)
     resultsRow.roles = [];
 
     // debug('role_petsitter', role_petsitter);
@@ -228,8 +233,8 @@ const userDataMapper = {
       userRoleObj.role_id = 1;
       const resultPetsitter = await client.query(queryUserRole);
       // debug('resultPetsitter :', resultPetsitter.rows[0]);
-      // on rajoute une propriété à notre objet final result.rows[0]
-      // results.rows[0].role_petsitter = resultPetsitter.rows[0].role_id;
+
+      // we push the role_id in the array of the "roles" property
       resultsRow.roles.push(resultPetsitter.rows[0].role_id);
     }
     // debug('role_petowner', role_petowner);
@@ -237,28 +242,35 @@ const userDataMapper = {
       userRoleObj.role_id = 2;
       const resultPetowner = await client.query(queryUserRole);
       // debug('resultPetowner :', resultPetowner.rows[0]);
-      // results.rows[0].role_petowner = resultPetowner.rows[0].role_id;
+
+      // we push the role_id in the array of the "roles" property
       resultsRow.roles.push(resultPetowner.rows[0].role_id);
     }
 
-    // debug('objet final :', results.rows[0]);
+    // we add the pet-types for this user in the table "user_has_pet_type":
+    // pet_types is an array of string, so first we cast to numbers:
+    const petTypesToNumbers = pet_type.map(Number);
 
-    // Pour faire une seule requete : à voir plus tard
-    // const createRoleObj = {
-    //   user_id: id,
-    //   role: {
-    //     role_petsitter: role_petsitter ? 1 : null,
-    //     role_petowner: role_petowner ? 2 : null,
-    //   }
-    // }
-    // const query2 = {
-    //   text: `
-    //     INSERT INTO "user_has_role" ("user_id", "role_id")
-    //     VALUES
-    //     (user_id, role.role_petsitter),
-    //     (user_id, role.role_petowner)
-    //   `
-    // }
+    const queryUserPetTypes = {
+      text: `
+        SELECT * FROM new_user_has_pet_type($1, $2);
+      `,
+      values: [userId, petTypesToNumbers],
+    };
+
+    const resultsPetType = await client.query(queryUserPetTypes);
+    debug('resultsPetType :', resultsPetType.rows);
+
+    const allPetTypes = resultsPetType.rows;
+
+    // we add a "pet_types" property to the user we'll return (array of the pet_type(s))
+    resultsRow.pet_types = [];
+    // for each "pet_type" of the petsitter we push the "pet_type_id" in the "pet_types" array
+    allPetTypes.forEach((petType) => {
+      resultsRow.pet_types.push(petType.pet_type_id);
+    });
+
+    // debug('objet final :', results.rows[0]);
 
     return results.rows[0];
   },
@@ -267,17 +279,22 @@ const userDataMapper = {
   modifyUser: async (id, modifyObj, userBeforeSave) => {
     debug('modifyUser');
     debug('id', id);
-    // debug('modifyObj', modifyObj);
-    // debug('userBeforeSave', userBeforeSave);
+    debug('modifyObj', modifyObj);
+    debug('userBeforeSave', userBeforeSave);
 
-    const { role_petsitter, role_petowner, ...modifyUserObj } = modifyObj;
+    // we extract "role_petsitter" + "role_petowner" + array "pet_type" from createObj(req.body)
+    // we create "createObj2" with all the other properties that can be inserted in "user" table
+    const {
+      role_petsitter, role_petowner, pet_type, ...modifyUserObj
+    } = modifyObj;
 
     let results = {};
+
     // Modify user in table "user"
 
     // Check if unchanged email : use update_user function
     if (userBeforeSave.email === modifyObj.email) {
-      // debug('email identique');
+      debug('email identique');
       const { email, ...modifyObjNoEmail } = modifyUserObj;
       const queryUser = {
         text: `
@@ -288,7 +305,7 @@ const userDataMapper = {
       results = await client.query(queryUser);
     } else {
       // use update_userWithEmail function if new email
-      // debug('email différent');
+      debug('email différent');
       const queryUser = {
         text: `
           SELECT * FROM update_userWithEmail($1)
@@ -297,25 +314,23 @@ const userDataMapper = {
       };
       results = await client.query(queryUser);
     }
-    // debug('userAfterSave', results.rows[0]);
+    // const { id: userId } = results.rows[0];
+    debug('userAfterSave', results.rows[0]);
 
     // Modify role in table "user_has_role"
-    // On récupère l'id du user qu'on vient de modifier en table "user" :
-    const { id: userId } = results.rows[0];
-    // debug('userId', userId);
 
     // ---------IDEALEMENT : REFACTO DE CE QUI SUIT DANS UNE AUTRE FONCTION
     // ---------PAR EXEMPLE "modifyUserHasRole"
     //---------
 
-    // Promesses pour les requêtes asynchrones
+    // array of promises of the following async queries :
     const promises = [];
 
-    // 1) Tester si le role petsitter existe déjà
+    // 1) Check if role_petsitter already exists for this user
     if (userBeforeSave.role_names.includes('petsitter')) {
       // debug('userBeforeChangeRole.includes("petsitter")');
 
-      // Si oui, et que le nouveau role est false, on le supprime
+      // if it does AND role_petsitter=false in body : we delete the role
       if (role_petsitter === 'false') {
         // debug('role_petsitter === "false"');
         const queryUserRole = {
@@ -324,7 +339,7 @@ const userDataMapper = {
             WHERE "user_id" = $1
             AND "role_id" = 1
           `,
-          values: [userId],
+          values: [id],
         };
 
         promises.push(client.query(queryUserRole));
@@ -338,7 +353,7 @@ const userDataMapper = {
           VALUES ($1, 1)
           RETURNING *;
         `,
-        values: [userId],
+        values: [id],
       };
 
       promises.push(client.query(queryUserRole));
@@ -357,7 +372,7 @@ const userDataMapper = {
             WHERE "user_id" = $1
             AND "role_id" = 2
           `,
-          values: [userId],
+          values: [id],
         };
 
         promises.push(client.query(queryUserRole));
@@ -371,7 +386,7 @@ const userDataMapper = {
           VALUES ($1, 2)
           RETURNING *;
         `,
-        values: [userId],
+        values: [id],
       };
 
       promises.push(client.query(queryUserRole));
@@ -383,7 +398,43 @@ const userDataMapper = {
     // ---------
     // ---------
 
-    const userAfterSave = await userDataMapper.findUserById(userId);
+    // we update pet_types in user_has_pet_type (2 cases):
+    // pet_types is an array of string, so first we cast to numbers:
+    const petTypesToNb = pet_type.map(Number);
+    debug('tableau 1 :', userBeforeSave.pet_types_ids);
+    debug('tableau 2: ', petTypesToNb);
+
+    // 1) pour les pet_types cochés à la modif, on ajoute les lignes à ce user dans user_has_pet_type
+    const addedPetTypes = petTypesToNb.filter((type) => !userBeforeSave.pet_types_ids.includes(type));
+    // console.log(valeursNouvelles); >> insert
+    debug('valeurs ajoutées :', addedPetTypes);
+    // we add the pet-types for this user in the table "user_has_pet_type":
+
+    const queryUserAddedPetTypes = {
+      text: `
+        SELECT * FROM new_user_has_pet_type($1, $2);
+      `,
+      values: [id, addedPetTypes],
+    };
+
+    const resultsAddedPetType = await client.query(queryUserAddedPetTypes);
+    debug('resultsAddedPetType :', resultsAddedPetType.rows);
+
+    // 2) pour les pet_types décochés à la modif on delete les lignes à ce user dans user_has_pet_type
+    const removedPetTypes = userBeforeSave.pet_types_ids.filter((type) => !petTypesToNb.includes(type));
+    debug('valeurs supprimées :', removedPetTypes);
+
+    const queryUserRemovedPetTypes = {
+      text: `
+        SELECT * FROM delete_user_has_pet_type($1, $2);
+      `,
+      values: [id, removedPetTypes],
+    };
+
+    const resultsRemovedPetType = await client.query(queryUserRemovedPetTypes);
+    debug('resultsRemovedPetType :', resultsRemovedPetType.rows);
+
+    const userAfterSave = await userDataMapper.findUserById(id);
     // debug('userAfterSave', userAfterSave);
 
     return userAfterSave;

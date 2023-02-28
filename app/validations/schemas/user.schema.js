@@ -34,7 +34,8 @@ const schemas = {
       .email({
         // the TLD (top level domain) must be a valid name listed on the IANA registry:
         tlds: { allow: true },
-      }),
+      })
+      .required(),
     password: Joi
       .string()
       .min(8)
@@ -46,6 +47,7 @@ const schemas = {
     confirmPassword: Joi
       .string()
       .required()
+      // "confirmPassword" must match "password"
       .valid(Joi.ref('password')),
     postal_code: Joi
       .string()
@@ -69,6 +71,10 @@ const schemas = {
     role_petowner: Joi
       .boolean()
       .required(),
+    pet_type: Joi
+      .array()
+      .items(Joi.string())
+      .required(),
   }).required(),
   put: Joi.object({
     first_name: Joi
@@ -84,7 +90,8 @@ const schemas = {
       .email({
         // the TLD (top level domain) must be a valid name listed on the IANA registry:
         tlds: { allow: true },
-      }),
+      })
+      .required(),
     postal_code: Joi
       .string()
       // regex from our SQl DOMAIN "postal_code_fr" in DB
@@ -110,6 +117,10 @@ const schemas = {
       .required(),
     role_petowner: Joi
       .boolean()
+      .required(),
+    pet_type: Joi
+      .array()
+      .items(Joi.string())
       .required(),
   }).required(),
 };
