@@ -69,6 +69,7 @@ const schemas = {
     role_petowner: Joi
       .boolean()
       .required(),
+    pet_type: Joi.array(),
   }).required(),
   put: Joi.object({
     first_name: Joi

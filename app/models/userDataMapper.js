@@ -192,7 +192,9 @@ const userDataMapper = {
 
     // A partir de l'objet "createObj"(=request.body), je récupère role_petsitter et role_petsitter
     // et création nouvel objet "createObj2" qui comporte les autres propriétés pour la table user
-    const { role_petsitter, role_petowner, ...createObj2 } = createObj;
+    const {
+      role_petsitter, role_petowner, pet_type, ...createObj2
+    } = createObj;
 
     // Insertion de l'user dans la table "user"
     const queryUser = {
@@ -241,24 +243,28 @@ const userDataMapper = {
       resultsRow.roles.push(resultPetowner.rows[0].role_id);
     }
 
-    // debug('objet final :', results.rows[0]);
+    // we add the pet-types for this user in the table "user_has_pet_type":
+    // pet_types is an array of string, so first we cast to numbers:
+    const petTypesToNumbers = pet_type.map(Number);
+    debug('petTypesToNumbers :', petTypesToNumbers);
+    const queryUserPetTypes = {
+      text: `
+        SELECT * FROM new_user_has_pet_type($1, $2);
+      `,
+      values: [userId, petTypesToNumbers],
+    };
 
-    // Pour faire une seule requete : à voir plus tard
-    // const createRoleObj = {
-    //   user_id: id,
-    //   role: {
-    //     role_petsitter: role_petsitter ? 1 : null,
-    //     role_petowner: role_petowner ? 2 : null,
-    //   }
-    // }
-    // const query2 = {
-    //   text: `
-    //     INSERT INTO "user_has_role" ("user_id", "role_id")
-    //     VALUES
-    //     (user_id, role.role_petsitter),
-    //     (user_id, role.role_petowner)
-    //   `
-    // }
+    const resultsPetType = await client.query(queryUserPetTypes);
+    debug('resultsPetType :', resultsPetType.rows);
+
+    const allPetTypes = resultsPetType.rows;
+
+    resultsRow.pet_types = [];
+    allPetTypes.forEach((petType) => {
+      resultsRow.pet_types.push(petType.pet_type_id);
+    });
+
+    // debug('objet final :', results.rows[0]);
 
     return results.rows[0];
   },
