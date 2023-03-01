@@ -43,7 +43,7 @@ const authenticateToken = require('../middlewares/authenticateToken');
  * @property {string} postal_code - ad postal code
 */
 
-/** a get Ad type
+/** a User type
  * @typedef {object} User
  * @property {number} id - user id
  * @property {string} first_name - user first_name
