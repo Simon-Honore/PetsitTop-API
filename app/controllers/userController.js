@@ -24,13 +24,16 @@ const userController = {
 
     let user = await userDataMapper.findUserById(searchedId);
 
+    // On enlève le password de l'objet user
+    const { password, ...userWithoutPwd } = user;
+
     // Si l'user est connecté, on ajoute une propriété isOwner à l'objet user
     const loggedInUser = request.user;
     debug('loggedInUser :', loggedInUser);
     if (Number(searchedId) === loggedInUser.id) {
-      user = { ...user, isOwner: true };
+      user = { userWithoutPwd, isOwner: true };
     }
-    response.status(200).json(user);
+    response.status(200).json(userWithoutPwd);
   },
 
   async createUser(request, response, next) {
@@ -40,7 +43,8 @@ const userController = {
     // Test si email existe déjà
     const isExistingUser = await userDataMapper.findUserByEmail(body.email);
     if (isExistingUser) {
-      return next(new Error('Email already exists'));
+      const error = { statusCode: 400, message: 'Email is already exists' };
+      return next(error);
     }
 
     // Hash le password de l'user avec Bcrypt
@@ -55,8 +59,11 @@ const userController = {
 
     const user = await userDataMapper.createUser(bodySafe);
 
+    // On enlève le password de l'objet user
+    const { password, ...userWithoutPwd } = user;
+
     // debug(user);
-    return response.status(201).json(user);
+    return response.status(201).json(userWithoutPwd);
   },
 
   async modifyUser(request, response, next) {
@@ -85,12 +92,25 @@ const userController = {
       return next(error);
     }
 
+    // Test si l'email existe déjà (si l'email a été modifié)
+    const { email } = request.body;
+    debug(email);
+    // Si l'email a été modifié
+    if (email !== userBeforeSave.email) {
+      const emailAlreadyExists = await userDataMapper.findUserByEmail(email);
+      if (emailAlreadyExists) {
+        const error = { statusCode: 400, message: 'Email is already exists' };
+        return next(error);
+      }
+    }
+
     // On modifie l'user avec les nouvelles données
     const user = await userDataMapper.modifyUser(id, request.body, userBeforeSave);
 
-    debug(user);
+    // On enlève le password de l'objet user
+    const { password, ...userWithoutPwd } = user;
 
-    return response.status(200).json(user);
+    return response.status(200).json(userWithoutPwd);
   },
 
 };
