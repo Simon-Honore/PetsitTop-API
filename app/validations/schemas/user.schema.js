@@ -74,7 +74,6 @@ const schemas = {
     pet_type: Joi
       .array()
       .items(Joi.string())
-      .required(),
   }).required(),
   put: Joi.object({
     first_name: Joi
@@ -121,7 +120,6 @@ const schemas = {
     pet_type: Joi
       .array()
       .items(Joi.string())
-      .required(),
   }).required(),
 };
 

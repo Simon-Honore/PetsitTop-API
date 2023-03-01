@@ -249,7 +249,10 @@ const userDataMapper = {
 
     // we add the pet-types for this user in the table "user_has_pet_type":
     // pet_types is an array of string, so first we cast to numbers:
-    const petTypesToNumbers = pet_type.map(Number);
+    let petTypesToNumbers = [];
+    if (pet_type) { // Si pet_type est vide, on ne fait rien
+      petTypesToNumbers = pet_type.map(Number);
+    }
 
     const queryUserPetTypes = {
       text: `
@@ -400,7 +403,10 @@ const userDataMapper = {
 
     // we update pet_types in user_has_pet_type (2 cases):
     // pet_types is an array of string, so first we cast to numbers:
-    const petTypesToNb = pet_type.map(Number);
+    let petTypesToNb = [];
+    if (pet_type) { // Si pet_type est vide, on ne fait rien
+      petTypesToNb = pet_type.map(Number);
+    }
     debug('tableau 1 :', userBeforeSave.pet_types_ids);
     debug('tableau 2: ', petTypesToNb);
 
@@ -409,6 +415,7 @@ const userDataMapper = {
     // console.log(valeursNouvelles); >> insert
     debug('valeurs ajoutées :', addedPetTypes);
     // we add the pet-types for this user in the table "user_has_pet_type":
+
 
     const queryUserAddedPetTypes = {
       text: `
