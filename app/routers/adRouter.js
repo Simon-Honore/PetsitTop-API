@@ -57,6 +57,8 @@ adRouter.get('/user/:id([0-9]+)/ads', authenticateToken, controllerHandler(adCon
  *
  * @return {AdCreateModify} 201 - success response
  * @return {object} 500 - internal server error
+ * @return {object} 401 - unauthorized
+ * @return {object} 403 - forbidden
  *
  * @security BearerAuth
  */
@@ -70,6 +72,9 @@ adRouter.post('/user/:id([0-9]+)/ads', authenticateToken, validate(adPostSchema,
  *
  * @return {array<Ad>} 200 - success response
  * @return {object} 500 - internal server error
+ * @return {object} 401 - unauthorized
+ *
+ * @security BearerAuth
  */
 adRouter.get('/ads', authenticateToken, controllerHandler(adController.getAllAds));
 
@@ -84,6 +89,10 @@ adRouter.get('/ads', authenticateToken, controllerHandler(adController.getAllAds
  *
  * @return {AdCreateModify} 200 - success response
  * @return {object} 500 - internal server error
+ * @return {object} 401 - unauthorized
+ * @return {object} 403 - forbidden
+ *
+ * @security BearerAuth
  */
 adRouter.put('/ads/:id([0-9]+)', authenticateToken, validate(adPutSchema, 'body'), controllerHandler(adController.updateAdById));
 
@@ -97,6 +106,10 @@ adRouter.put('/ads/:id([0-9]+)', authenticateToken, validate(adPutSchema, 'body'
  *
  * @return {object} 204 - success response
  * @return {object} 500 - internal server error
+ * @return {object} 401 - unauthorized
+ * @return {object} 403 - forbidden
+ *
+ * @security BearerAuth
  */
 adRouter.delete('/ads/:id([0-9]+)', authenticateToken, controllerHandler(adController.deleteAdById));
 

@@ -33,7 +33,7 @@ const adController = {
     // Test if the user has the right to access this route
     const loggedInUser = request.user;
     if (Number(id) !== loggedInUser.id) {
-      const error = { statusCode: 401, message: 'Unauthorized' };
+      const error = { statusCode: 403, message: 'Frobidden' };
       return next(error);
     }
 
@@ -65,9 +65,9 @@ const adController = {
     const ads = await userDataMapper.findAdsByUserId(loggedInUser.id);
     const foundAd = ads.find((ad) => ad.id === Number(id));
 
-    // If not found, we return an error 401
+    // If not found, we return an error 403
     if (!foundAd) {
-      const error = { statusCode: 401, message: 'Unauthorized' };
+      const error = { statusCode: 403, message: 'Forbidden' };
       return next(error);
     }
 
@@ -98,9 +98,9 @@ const adController = {
     const foundAd = ads.find((ad) => ad.id === Number(id));
     // debug('foundAd', foundAd);
 
-    // If not found, we return an error 401
+    // If not found, we return an error 403
     if (!foundAd) {
-      const error = { statusCode: 401, message: 'Unauthorized' };
+      const error = { statusCode: 403, message: 'Forbidden' };
       return next(error);
     }
 
