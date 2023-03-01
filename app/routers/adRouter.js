@@ -35,7 +35,6 @@ const authenticateToken = require('../middlewares/authenticateToken');
  * @property {string} updated_at - ad update date
  */
 
-
 /** a create/modify Ad (for body) type
  * @typedef {object} AdCreateModify
  * @property {string} title - ad title
