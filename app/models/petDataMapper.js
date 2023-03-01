@@ -3,7 +3,46 @@ const client = require('./database');
 /* eslint-disable camelcase */
 const debug = require('debug')('opet:petDataMapper');
 
+/**
+ * a pet type
+ *
+ * @typedef {object} Pet
+ * @property {number} id - pet id
+ * @property {string} name - pet name
+ * @property {string} presentation - pet presentation
+ * @property {number} user_id - pet user_id
+ * @property {number} pet_type_id - pet pet_type_id
+ * @property {string} created_at - date of creation
+ * @property {string} updated_at - date of last update
+ */
+
+/**
+ * a pet type for creation/modification
+ *
+ * @typedef {object} createOrUpdatePet
+ * @property {string} name - pet name
+ * @property {string} presentation - pet presentation
+ * @property {number} pet_type_id - pet pet_type_id
+ */
+
+/**
+ * a pet with its pet_type_name
+ *
+ * @typedef {object} PetWithPetTypeName
+ * @property {string} name - pet name
+ * @property {string} presentation - pet presentation
+ * @property {number} pet_type_id - pet pet_type_id
+ * @property {string} pet_type_name - pet's pet_type_name
+ */
+
 const petDataMapper = {
+
+  /**
+   * fetches a pet entry according to its id
+   *
+   * @param {number} id - pet id
+   * @returns {Pet} a pet
+   */
   async findPetById(id) {
     debug('findPetById');
 
@@ -18,6 +57,12 @@ const petDataMapper = {
     return results.rows[0];
   },
 
+  /**
+   * fetches all pets according to their user's id
+   *
+   * @param {number} id - user id
+   * @returns {array<Pet>} array of pets
+   */
   async findAllPetsByUserId(userId) {
     debug('findAllPetsByUserId');
     debug('userId :', userId);
@@ -33,6 +78,13 @@ const petDataMapper = {
     return results.rows;
   },
 
+  /**
+   * adds (creates) a pet for a user
+   *
+   * @param {number} userId - the petowner's id (user id)
+   * @param {createOrUpdatePet} petObj - the pet to create
+   * @returns {PetWithPetTypeName} the created pet
+   */
   async createPetForUser(userId, petObj) {
     debug('createPetForUser');
     debug('userId :', userId);
@@ -66,6 +118,13 @@ const petDataMapper = {
     return addedPetWithPetTypeName;
   },
 
+  /**
+   * modifies a pet
+   *
+   * @param {number} petId - the pet's id
+   * @param {createOrUpdatePet} petObj - the pet to update
+   * @returns {Pet} the updated pet
+   */
   async modifyPetFromId(petId, petObj) {
     debug('modifyPetForUser');
     debug('petId :', petId);
@@ -84,6 +143,11 @@ const petDataMapper = {
     return results.rows[0];
   },
 
+  /**
+   * deletes a pet
+   *
+   * @param {number} petId - the pet's id
+   */
   async deletePetFromId(petId) {
     debug('deletePetFromId');
     debug('petId :', petId);
