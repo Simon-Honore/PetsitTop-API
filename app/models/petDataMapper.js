@@ -19,16 +19,16 @@ const debug = require('debug')('opet:petDataMapper');
 /**
  * a pet type for creation/modification
  *
- * @typedef {object} createOrUpdatePet
+ * @typedef {object} PetCreateModify
  * @property {string} name - pet name
  * @property {string} presentation - pet presentation
  * @property {number} pet_type_id - pet pet_type_id
  */
 
 /**
- * a pet with its pet_type_name
+ * a created pet with its pet_type_name
  *
- * @typedef {object} PetWithPetTypeName
+ * @typedef {object} PetCreated
  * @property {string} name - pet name
  * @property {string} presentation - pet presentation
  * @property {number} pet_type_id - pet pet_type_id
@@ -82,8 +82,8 @@ const petDataMapper = {
    * adds (creates) a pet for a user
    *
    * @param {number} userId - the petowner's id (user id)
-   * @param {createOrUpdatePet} petObj - the pet to create
-   * @returns {PetWithPetTypeName} the created pet
+   * @param {PetCreateModify} petObj - the pet to create
+   * @returns {PetCreated} the created pet
    */
   async createPetForUser(userId, petObj) {
     debug('createPetForUser');
@@ -122,7 +122,7 @@ const petDataMapper = {
    * modifies a pet
    *
    * @param {number} petId - the pet's id
-   * @param {createOrUpdatePet} petObj - the pet to update
+   * @param {PetCreateModify} petObj - the pet to update
    * @returns {Pet} the updated pet
    */
   async modifyPetFromId(petId, petObj) {
