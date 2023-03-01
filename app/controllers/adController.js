@@ -53,13 +53,6 @@ const adController = {
     const { body } = request; // données de l'annonce
     const { id } = request.params; // id de l'utilisateur
 
-    // Test if the user has the right to access this route
-    const loggedInUser = request.user;
-    if (Number(id) !== loggedInUser.id) {
-      const error = { statusCode: 403, message: 'Forbidden' };
-      return next(error);
-    }
-
     // Test if the user exists
     const isExistingUser = await userDataMapper.findUserById(id);
 
@@ -67,6 +60,13 @@ const adController = {
     if (!isExistingUser) {
       debug(`User ${id} does not exists`);
       const error = { statusCode: 404, message: 'User does not exists' };
+      return next(error);
+    }
+
+    // Test if the user has the right to access this route
+    const loggedInUser = request.user;
+    if (Number(id) !== loggedInUser.id) {
+      const error = { statusCode: 403, message: 'Forbidden' };
       return next(error);
     }
 
