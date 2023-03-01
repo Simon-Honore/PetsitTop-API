@@ -18,6 +18,17 @@ const swaggerOptions = {
   baseDir: path.join(__dirname, 'app'),
   filesPattern: './**/*.js',
   swaggerUIPath: '/api-docs',
+  security: {
+    BasicAuth: {
+      type: 'http',
+      scheme: 'basic',
+    },
+    BearerAuth: {
+      type: 'http',
+      scheme: 'bearer',
+      bearerFormat: 'JWT',
+    },
+  },
 };
 
 expressSwagger(app)(swaggerOptions);
