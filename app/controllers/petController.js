@@ -15,19 +15,19 @@ const petController = {
     debug('addPets');
     const { id } = request.params;
 
-    // check if the :id in params for the route matches the logged in user's id:
-    const loggedInUser = request.user;
-    debug('loggedInUser :', loggedInUser);
-    if (Number(id) !== loggedInUser.id) {
-      const error = { statusCode: 403, message: 'Forbidden' };
-      return next(error);
-    }
-
     // check if user exists in DB
     const userExists = await userDataMapper.findUserById(id);
     // if not => error
     if (!userExists) {
       const error = { statusCode: 404, message: 'User does not exist' };
+      return next(error);
+    }
+
+    // check if the :id in params for the route matches the logged in user's id:
+    const loggedInUser = request.user;
+    debug('loggedInUser :', loggedInUser);
+    if (Number(id) !== loggedInUser.id) {
+      const error = { statusCode: 403, message: 'Forbidden' };
       return next(error);
     }
 
@@ -56,14 +56,17 @@ const petController = {
       return next(error);
     }
 
-    // if pet exists then check if logged in user owns the pet:
+    // Test if the pet exists
+    const isExistingPet = await petDataMapper.findPetById(id);
+    if (!isExistingPet) {
+      debug(`Pet ${id} does not exists`);
+      return next();
+    }
+
+    // Test if the user has the right to access this route
+    // If the "pet"."user_id" is different from "loggedInUser"."id", we return an error 403
     const loggedInUser = request.user;
-    const petsOfLoggedInUser = await petDataMapper.findAllPetsByUserId(loggedInUser.id);
-    debug('user pets list :', petsOfLoggedInUser);
-    // check if id (from the route) matches the id of the pets from the user's list
-    const foundPet = petsOfLoggedInUser.find((pet) => pet.id === Number(id));
-    debug('foundPet', foundPet);
-    if (!foundPet) {
+    if (loggedInUser.id !== isExistingPet.user_id) {
       const error = { statusCode: 403, message: 'Forbidden' };
       return next(error);
     }
@@ -85,22 +88,17 @@ const petController = {
 
     const { id } = request.params;
 
-    // check if Pet exists in DB
-    const petExists = await petDataMapper.findPetById(id);
-    // if not => error
-    if (!petExists) {
-      const error = { statusCode: 404, message: 'Pet does not exist' };
-      return next(error);
+    // Test if the pet exists (or 404)
+    const isExistingPet = await petDataMapper.findPetById(id);
+    if (!isExistingPet) {
+      debug(`Pet ${id} does not exists`);
+      return next();
     }
 
-    // if pet exists then check if logged in user owns the pet:
+    // Test if the user has the right to access this route
+    // If the "pet"."user_id" is different from "loggedInUser"."id", we return an error 403
     const loggedInUser = request.user;
-    const petsOfLoggedInUser = await petDataMapper.findAllPetsByUserId(loggedInUser.id);
-    debug('user pets list :', petsOfLoggedInUser);
-    // check if id (from the route) matches the id of the pets from the user's list
-    const foundPet = petsOfLoggedInUser.find((pet) => pet.id === Number(id));
-    debug('foundPet', foundPet);
-    if (!foundPet) {
+    if (loggedInUser.id !== isExistingPet.user_id) {
       const error = { statusCode: 403, message: 'Forbidden' };
       return next(error);
     }

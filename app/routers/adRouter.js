@@ -30,7 +30,7 @@ const authenticateToken = require('../middlewares/authenticateToken');
  * @property {string} city - ad city
  * @property {string} postal_code - ad postal code
  * @property {number} user_id - user id
- * @property {array<User>} user - ad user with id first_name and last_name
+ * @property {array<AdUser>} user - ad user with id first_name and last_name
  * @property {string} created_at - ad creation date
  * @property {string} updated_at - ad update date
  */
@@ -43,8 +43,8 @@ const authenticateToken = require('../middlewares/authenticateToken');
  * @property {string} postal_code - ad postal code
 */
 
-/** a User type
- * @typedef {object} User
+/** an AdUser type
+ * @typedef {object} AdUser
  * @property {number} id - user id
  * @property {string} first_name - user first_name
  * @property {string} last_name - user last_name
