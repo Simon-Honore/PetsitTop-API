@@ -60,7 +60,7 @@ const petDataMapper = {
   /**
    * fetches all pets according to their user's id
    *
-   * @param {number} id - user id
+   * @param {number} userId - user id
    * @returns {array<Pet>} array of pets
    */
   async findAllPetsByUserId(userId) {
