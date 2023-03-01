@@ -56,7 +56,7 @@ const adController = {
     // Test if the user has the right to access this route
     const loggedInUser = request.user;
     if (Number(id) !== loggedInUser.id) {
-      const error = { statusCode: 403, message: 'Frobidden' };
+      const error = { statusCode: 403, message: 'Forbidden' };
       return next(error);
     }
 
@@ -92,23 +92,18 @@ const adController = {
     // Test if the user has the right to access this route
     const loggedInUser = request.user;
 
-    // I get ads of the connected user
-    const ads = await userDataMapper.findAdsByUserId(loggedInUser.id);
-    const foundAd = ads.find((ad) => ad.id === Number(id));
+    // Test if the ad exists
+    const isExistingAd = await adDataMapper.findAdById(id);
+    if (!isExistingAd) {
+      debug(`Ad ${id} does not exists`);
+      return next();
+    }
 
-    // If not found, we return an error 403
-    if (!foundAd) {
+    // If the "ad"."user_id" is different from "loggedInUser"."id", we return an error 403
+    if (loggedInUser.id !== isExistingAd.user_id) {
       const error = { statusCode: 403, message: 'Forbidden' };
       return next(error);
     }
-
-    // Test if the ad exists
-    // const isExistingAd = await adDataMapper.findAdById(id);
-    // if (!isExistingAd) {
-    //   debug(`Ad ${id} does not exists`);
-    //   const error = { statusCode: 404, message: 'Ad does not exists' };
-    //   return next(error);
-    // }
 
     // If the ad exists and the user has the right to access, we update it with the new data
     const ad = await adDataMapper.updateAdById(id, body);
@@ -131,24 +126,18 @@ const adController = {
     // Test if the user has the right to access this route
     const loggedInUser = request.user;
 
-    // I get ads of the connected user
-    const ads = await userDataMapper.findAdsByUserId(loggedInUser.id);
-    // debug('annonces', ads);
-    const foundAd = ads.find((ad) => ad.id === Number(id));
-    // debug('foundAd', foundAd);
+    // If the ad does not exist, we return an error 404
+    const isExistingAd = await adDataMapper.findAdById(id);
+    if (!isExistingAd) {
+      debug(`Ad ${id} does not exists`);
+      return next();
+    }
 
-    // If not found, we return an error 403
-    if (!foundAd) {
+    // If the "ad"."user_id" is different from "loggedInUser"."id", we return an error 403
+    if (loggedInUser.id !== isExistingAd.user_id) {
       const error = { statusCode: 403, message: 'Forbidden' };
       return next(error);
     }
-
-    // If the ad does not exist, we return an error 404
-    // const isExistingAd = await adDataMapper.findAdById(id);
-    // if (!isExistingAd) {
-    //   debug(`Ad ${id} does not exists`);
-    //   return next();
-    // }
 
     // Delete the ad
     await adDataMapper.deleteAdById(id);
