@@ -4,11 +4,26 @@ const adDataMapper = require('../models/adDataMapper');
 const userDataMapper = require('../models/userDataMapper');
 
 const adController = {
-  async getAllAds(request, response) {
+
+  /**
+   * responds with all entries from "ad" relation
+   *
+   * @param {Object} _
+   * @param {Object} response
+   */
+  async getAllAds(_, response) {
     debug('getAllAds');
     const ads = await adDataMapper.findAllAds();
     response.status(200).json(ads);
   },
+
+  /**
+   * responds with one entry from "ad" relation
+   *
+   * @param {Object} request
+   * @param {Object} response
+   * @param {function} next
+   */
   async getAdsByUserId(request, response, next) {
     debug('getAdsByUserId');
     const { id } = request.params;
@@ -25,6 +40,14 @@ const adController = {
     const ads = await adDataMapper.findAdsByUserId(id);
     return response.status(200).json(ads);
   },
+
+  /**
+   * create one entry in "ad" relation
+   *
+   * @param {Object} request
+   * @param {Object} response
+   * @param {function} next
+   */
   async createAdByUserId(request, response, next) {
     debug('createAd');
     const { body } = request; // données de l'annonce
@@ -33,7 +56,7 @@ const adController = {
     // Test if the user has the right to access this route
     const loggedInUser = request.user;
     if (Number(id) !== loggedInUser.id) {
-      const error = { statusCode: 401, message: 'Unauthorized' };
+      const error = { statusCode: 403, message: 'Frobidden' };
       return next(error);
     }
 
@@ -53,6 +76,14 @@ const adController = {
     // Réponse
     return response.status(201).json(ad);
   },
+
+  /**
+   * modify one entry in "ad" relation
+   *
+   * @param {Object} request
+   * @param {Object} response
+   * @param {function} next
+   */
   async updateAdById(request, response, next) {
     debug('updateAdById');
     const { id } = request.params; // id of the ad
@@ -65,9 +96,9 @@ const adController = {
     const ads = await userDataMapper.findAdsByUserId(loggedInUser.id);
     const foundAd = ads.find((ad) => ad.id === Number(id));
 
-    // If not found, we return an error 401
+    // If not found, we return an error 403
     if (!foundAd) {
-      const error = { statusCode: 401, message: 'Unauthorized' };
+      const error = { statusCode: 403, message: 'Forbidden' };
       return next(error);
     }
 
@@ -85,6 +116,14 @@ const adController = {
     // Response
     return response.status(200).json(ad);
   },
+
+  /**
+   * remove one entry in "ad" relation
+   *
+   * @param {Object} request
+   * @param {Object} response
+   * @param {function} next
+   */
   async deleteAdById(request, response, next) {
     debug('deleteAdById');
     const { id } = request.params; // id of the ad
@@ -98,9 +137,9 @@ const adController = {
     const foundAd = ads.find((ad) => ad.id === Number(id));
     // debug('foundAd', foundAd);
 
-    // If not found, we return an error 401
+    // If not found, we return an error 403
     if (!foundAd) {
-      const error = { statusCode: 401, message: 'Unauthorized' };
+      const error = { statusCode: 403, message: 'Forbidden' };
       return next(error);
     }
 

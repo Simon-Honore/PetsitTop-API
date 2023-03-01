@@ -3,6 +3,31 @@ const debug = require('debug')('opet:adDataMapper');
 const client = require('./database');
 
 const adDataMapper = {
+  /** a general Ad type
+   * @typedef {object} Ad
+   * @property {number} id - ad id
+   * @property {string} title - ad title
+   * @property {string} content - ad content
+   * @property {string} city - ad city
+   * @property {string} postal_code - ad postal code
+   * @property {number} user_id - user id
+   * @property {array<User>} user - ad user with id first_name and last_name
+   * @property {string} created_at - ad creation date
+   * @property {string} updated_at - ad update date
+   */
+
+  /** a get Ad type
+   * @typedef {object} User
+   * @property {number} id - user id
+   * @property {string} first_name - user first_name
+   * @property {string} last_name - user last_name
+   */
+
+  /**
+   * find all entries from the relation "ad"
+   *
+   * @returns {array<Ad>} array of ad entries
+   */
   findAllAds: async () => {
     const query = {
       text: `
@@ -17,6 +42,13 @@ const adDataMapper = {
     const results = await client.query(query);
     return results.rows;
   },
+
+  /**
+   * find an entry from the relation "ad" according to its id
+   *
+   * @param {number} id - id of the ad
+   * @returns {Object<Ad>} an ad entry
+   */
   findAdById: async (id) => {
     debug(`findAdById(${id})`);
     const query = {
@@ -29,6 +61,13 @@ const adDataMapper = {
     const results = await client.query(query);
     return results.rows[0];
   },
+
+  /**
+   * find all entries from the relation "ad" according to its user id
+   *
+   * @param {number} id - the user's id
+   * @returns {array<Ad>} array of ad entries
+   */
   findAdsByUserId: async (id) => {
     debug('findAdsByUserId');
     const query = {
@@ -42,7 +81,13 @@ const adDataMapper = {
     return results.rows;
   },
 
-  // Création d'une annonce
+  /**
+   * create an entry in the relation "ad"
+   *
+   * @param {Object} createAdObj - the ad to create
+   * @param {number} user_id - the user's id
+   * @returns {array<Ad>} array of ad entries
+   */
   createAdByUserId: async (createAdObj, user_id) => {
     debug('createAd');
     debug('createAdObj', createAdObj);
@@ -58,7 +103,13 @@ const adDataMapper = {
     return results.rows[0];
   },
 
-  // Update ad by id
+  /**
+   * modify an entry in the relation "ad"
+   *
+   * @param {Object} updateAdObj - the ad to update
+   * @param {number} id - id of the ad
+   * @returns {Object<Ad>} array of ad entries
+   */
   updateAdById: async (id, updateAdObj) => {
     debug(`updateAdById(${id})`);
     debug('updateAdObj', updateAdObj);
@@ -74,7 +125,11 @@ const adDataMapper = {
     return results.rows[0];
   },
 
-  // Delete ad by id
+  /**
+   * remove an entry in the relation "ad"
+   *
+   * @param {number} id - id of the ad
+   */
   deleteAdById: async (id) => {
     debug(`deleteAdById(${id})`);
     const query = {
