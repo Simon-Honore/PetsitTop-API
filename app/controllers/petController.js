@@ -11,7 +11,7 @@ const petController = {
     const loggedInUser = request.user;
     debug('loggedInUser :', loggedInUser);
     if (Number(id) !== loggedInUser.id) {
-      const error = { statusCode: 401, message: 'Unauthorized' };
+      const error = { statusCode: 403, message: 'Forbidden' };
       return next(error);
     }
 
@@ -49,7 +49,7 @@ const petController = {
     const foundPet = petsOfLoggedInUser.find((pet) => pet.id === Number(id));
     debug('foundPet', foundPet);
     if (!foundPet) {
-      const error = { statusCode: 401, message: 'Unauthorized' };
+      const error = { statusCode: 403, message: 'Forbidden' };
       return next(error);
     }
 
@@ -79,7 +79,7 @@ const petController = {
     const foundPet = petsOfLoggedInUser.find((pet) => pet.id === Number(id));
     debug('foundPet', foundPet);
     if (!foundPet) {
-      const error = { statusCode: 401, message: 'Unauthorized' };
+      const error = { statusCode: 403, message: 'Forbidden' };
       return next(error);
     }
 
