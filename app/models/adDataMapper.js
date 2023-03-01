@@ -6,7 +6,12 @@ const adDataMapper = {
   findAllAds: async () => {
     const query = {
       text: `
-        SELECT * FROM "ad"
+        SELECT
+          "ad".*,
+          json_agg(json_build_object('id', "user"."id",'first_name', "user"."first_name", 'last_name', "user"."last_name")) AS "user"
+        FROM "ad"
+        LEFT JOIN "user" ON "ad"."user_id" = "user".id
+        GROUP BY "ad".id
       `,
     };
     const results = await client.query(query);
