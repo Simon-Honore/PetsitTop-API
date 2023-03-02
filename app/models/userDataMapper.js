@@ -31,14 +31,110 @@ const client = require('./database');
  * @property {string} postal_code - user's postal code (adress)
  * @property {string} city - user's city (adress)
  * @property {string} presentation - user's presentation
+ * @property {string} availability - user's availability 'true'/'false'(if role petsitter)
  * @property {boolean} availability - user's availability (if role petsitter)
- * @property {string} availability_details - user's availability details (if role petsitter)
  * @property {array<UserRole>} roles - array of user's roles (id and name)
  * @property {array<UserPetType>} roles - array of user's pet_types (id and name) if role petsitter
  * @property {array<UserPet>} pets - array of user's pets (id, name, pet_type name, presentation)
  * @property {array<UserAd>} ads - array of user's ads (id, city, title, content)
  * @property {string} created_at - date of creation
  * @property {string} updated_at - date of last update
+ */
+
+/**
+ * a UserWithPetTypeAndRole type
+ *
+ * @typedef {object} UserWithPetTypeAndRole
+ * @property {number} id - user id
+ * @property {string} first_name - user's first_name
+ * @property {string} last_name - user's last_name
+ * @property {string} email - user's email adress
+ * @property {string} postal_code - user's postal code (adress)
+ * @property {string} city - user's city (adress)
+ * @property {string} presentation - user's presentation
+ * @property {string} availability - user's availability 'true'/'false'(if role petsitter)
+ * @property {boolean} availability - user's availability (if role petsitter)
+ * @property {array<string>} role_names - array of user's role names
+ * @property {array<number>} pet_types_ids - array of user's pet_types names if role petsitter
+ * @property {string} created_at - date of creation
+ * @property {string} updated_at - date of last update
+ */
+
+/**
+ * a post User type
+ *
+ * @typedef {object} UserPost
+ * @property {string} first_name - user's first_name
+ * @property {string} last_name - user's last_name
+ * @property {string} email - user's email adress
+ * @property {string} password - user's password
+ * @property {string} confirmPassword - user's password confirmation
+ * @property {string} postal_code - user's postal code (adress)
+ * @property {string} city - user's city (adress)
+ * @property {string} role_petowner - 'true' if user's role is petowner / 'false'
+ * @property {string} role_petsitter - 'true' if user's role is petsitter / 'false'
+ * @property {string} availability - user's availability 'true'/'false'(if role petsitter)
+ * @property {string} availability_details - user's availability details (if role petsitter)
+ * @property {array<number>} pet_type - array of user's pet_type id
+ */
+
+/**
+ * a put User type
+ *
+ * @typedef {object} UserPut
+ * @property {string} first_name - user's first_name
+ * @property {string} last_name - user's last_name
+ * @property {string} email - user's email adress
+ * @property {string} presentation - user's presentation
+ * @property {string} postal_code - user's postal code (adress)
+ * @property {string} city - user's city (adress)
+ * @property {string} role_petowner - 'true' if user's role is petowner / 'false'
+ * @property {string} role_petsitter - 'true' if user's role is petsitter / 'false'
+ * @property {string} availability - user's availability 'true'/'false'(if role petsitter)
+ * @property {string} availability_details - user's availability details (if role petsitter)
+ * @property {array<string>} pet_type - array of user's pet_type id
+ */
+
+/**
+ * a User created type
+ *
+ * @typedef {object} UserCreated
+ * @property {number} id - user id
+ * @property {string} first_name - user's first_name
+ * @property {string} last_name - user's last_name
+ * @property {string} email - user's email adress
+ * @property {string} postal_code - user's postal code (adress)
+ * @property {string} city - user's city (adress)
+ * @property {string} presentation - user's presentation
+ * @property {array<number>} roles - array of user's roles id
+ * @property {array<number>} pet_type - array of user's pet_type id
+ * @property {boolean} availability - user's availability (if role petsitter)
+ * @property {string} availability_details - user's availability details (if role petsitter)
+ * @property {string} created_at - date of creation
+ * @property {string} updated_at - date of last update
+ */
+
+/**
+ * an User updated type
+ *
+ * @typedef {object} UserUpdated
+ * @property {number} id - user id
+ * @property {string} first_name - user's first_name
+ * @property {string} last_name - user's last_name
+ * @property {string} email - user's email adress
+ * @property {string} postal_code - user's postal code (adress)
+ * @property {string} city - user's city (adress)
+ * @property {string} presentation - user's presentation
+ * @property {array<number>} roles - array of user's roles id
+ * @property {array<number>} pet_type - array of user's pet_type id
+ * @property {boolean} availability - user's availability (if role petsitter)
+ * @property {string} availability_details - user's availability details (if role petsitter)
+ * @property {string} created_at - date of creation
+ * @property {string} updated_at - date of last update
+ * @property {array<number>} roles - array of user's roles id
+ * @property {array<number>} pet_type - array of user's pet_type id
+ * @property {array<UserPet>} pets - array of user's pets (id, name, pet_type name, presentation)
+ * @property {array<UserAd>} ads - array of user's ads (id, city, title, content)
  */
 
 const userDataMapper = {
@@ -221,6 +317,13 @@ const userDataMapper = {
     return results.rows[0];
   },
 
+  /**
+   * fetches a user with pet_types_id and role_names according to its id
+   *
+   * @param {number} id - user's id
+   *
+   * @returns {UserWithPetTypeAndRole} a user with its role_names, pet_types_ids (if petsitter)
+  */
   findUserWithRoleAndPetTypeById: async (id) => {
     debug('findUserWithRoleAndPetTypeById');
     debug('id', id);
@@ -245,7 +348,12 @@ const userDataMapper = {
     return results.rows[0];
   },
 
-  // Add one user with their roles
+  /**
+   * adds (creates) a user
+   *
+   * @param {UserPost} createObj - the user to create
+   * @returns {UserCreated} the created user
+   */
   createUser: async (createObj) => {
     debug('createObj', createObj);
     debug('createUser');
@@ -333,7 +441,15 @@ const userDataMapper = {
     return results.rows[0];
   },
 
-  // Modify one user
+  /**
+   * modifies a user according to it's id
+   *
+   * @param {number} id - the user's id
+   * @param {UserPost} modifyObj - the user to modify
+   * @param {UserGet} userBeforeSave - the user before modifications
+   *
+   * @returns {UserUpdated} the modified user
+   */
   modifyUser: async (id, modifyObj, userBeforeSave) => {
     debug('modifyUser');
     debug('id', id);
@@ -384,75 +500,72 @@ const userDataMapper = {
     // array of promises of the following async queries :
     const promises = [];
 
-    userBeforeSave.roles.forEach((previousRole) => {
-      debug('user before Save :', userBeforeSave);
-      debug('previousRole :', previousRole);
-      // 1) Check if role_petsitter already exists for this user
-      if (previousRole.name === 'petsitter') {
+    // 1) Check if role_petsitter already exists for this user
+    if (userBeforeSave.role_names.includes('petsitter')) {
       // debug('userBeforeChangeRole.includes("petsitter")');
 
-        // if it does AND role_petsitter=false in body : we delete the role
-        if (role_petsitter === 'false') {
-        // debug('role_petsitter === "false"');
-          const queryUserRole = {
-            text: `
+      // if it does AND role_petsitter=false in body : we delete the role
+      if (role_petsitter === 'false') {
+        debug('role_petsitter === "false"');
+        const queryUserRole = {
+          text: `
             DELETE FROM "user_has_role"
             WHERE "user_id" = $1
             AND "role_id" = 1
           `,
-            values: [id],
-          };
+          values: [id],
+        };
 
-          promises.push(client.query(queryUserRole));
-        }
-      } else {
-      // 1bis) Sinon (role petsitter est absent de role_names)
-      // et si role_petsitter est true
-        const queryUserRole = {
-          text: `
+        promises.push(client.query(queryUserRole));
+      }
+    } else {
+      debug('previousRole.name === "petsitter"');
+      // 1bis) if 'petsitter' is not in previous role AND it is updated to 'true':
+      const queryUserRole = {
+        text: `
           INSERT INTO "user_has_role"("user_id", "role_id")
           VALUES ($1, 1)
           RETURNING *;
         `,
-          values: [id],
-        };
+        values: [id],
+      };
 
-        promises.push(client.query(queryUserRole));
-      }
+      promises.push(client.query(queryUserRole));
+    }
 
-      // 2) Tester si le role petowner existe déjà
-      if (previousRole.name === 'petowner') {
-        debug('previousRole.name === "petowner"');
+    // 2) Tester si le role petowner existe déjà
+    if (userBeforeSave.role_names.includes('petowner')) {
+      debug('previousRole.name === "petowner"');
 
-        // Si oui, et que le nouveau role est false, on le supprime
-        if (role_petowner === 'false') {
-          debug('role_petowner === "false"');
-          const queryUserRole = {
-            text: `
+      // Si oui, et que le nouveau role est false, on le supprime
+      if (role_petowner === 'false') {
+        debug('role_petowner === "false"');
+        const queryUserRole = {
+          text: `
             DELETE FROM "user_has_role"
             WHERE "user_id" = $1
             AND "role_id" = 2
           `,
-            values: [id],
-          };
-
-          promises.push(client.query(queryUserRole));
-        }
-      } else {
-      // 2bis) Sinon (role petowner est absent de role_names)
-      // et si role_petowner est true
-        const queryUserRole = {
-          text: `
-          INSERT INTO "user_has_role"("user_id", "role_id")
-          VALUES ($1, 2)
-          RETURNING *;
-        `,
           values: [id],
         };
 
         promises.push(client.query(queryUserRole));
       }
-    });
+    } else {
+      // 2bis) Sinon (role petowner est absent de role_names)
+      // et si role_petowner est true
+      const queryUserRole = {
+        text: `
+          INSERT INTO "user_has_role"("user_id", "role_id")
+          VALUES ($1, 2)
+          RETURNING *;
+        `,
+        values: [id],
+      };
+
+      promises.push(client.query(queryUserRole));
+    }
+
     await Promise.all(promises);
 
     // ---------
@@ -461,17 +574,20 @@ const userDataMapper = {
 
     // we update pet_types in user_has_pet_type (2 cases):
     // pet_types is an array of string, so first we cast to numbers:
-    const petTypesToNb = pet_type.map(Number);
-    const previousPetTypesArray = [];
-    userBeforeSave.pet_types.forEach((previousPetType) => {
-      previousPetTypesArray.push(previousPetType.id);
-    });
-    debug('tableau 1 :', previousPetTypesArray);
-    debug('tableau 2: ', petTypesToNb);
+    let petTypesToNb = [];
+    if (pet_type) { // Si pet_type est vide, on ne fait rien
+      petTypesToNb = pet_type.map(Number);
+    }
 
-    // 1) pour les pet_types cochés à la modif, on ajoute les lignes à ce user dans user_has_pet_type
-    const addedPetTypes = petTypesToNb.filter((type) => !previousPetTypesArray.includes(type));
-    // console.log(valeursNouvelles); >> insert
+    debug('Previous pet_types : ', userBeforeSave.pet_types_ids);
+    debug('Updated pet_types : ', petTypesToNb);
+
+    // 1) pour les pet_types cochés à la modif,
+    // on ajoute les lignes à ce user dans user_has_pet_type
+    const addedPetTypes = petTypesToNb.filter(
+      (type) => !userBeforeSave.pet_types_ids.includes(type),
+    );
+
     debug('valeurs ajoutées :', addedPetTypes);
     // we add the pet-types for this user in the table "user_has_pet_type":
 
@@ -482,11 +598,13 @@ const userDataMapper = {
       values: [id, addedPetTypes],
     };
 
-    const resultsAddedPetType = await client.query(queryUserAddedPetTypes);
-    debug('resultsAddedPetType :', resultsAddedPetType.rows);
+    await client.query(queryUserAddedPetTypes);
 
-    // 2) pour les pet_types décochés à la modif on delete les lignes à ce user dans user_has_pet_type
-    const removedPetTypes = previousPetTypesArray.filter((type) => !petTypesToNb.includes(type));
+    // 2) pour les pet_types décochés à la modif
+    // on delete les lignes à ce user dans user_has_pet_type
+    const removedPetTypes = userBeforeSave.pet_types_ids.filter(
+      (type) => !petTypesToNb.includes(type),
+    );
     debug('valeurs supprimées :', removedPetTypes);
 
     const queryUserRemovedPetTypes = {
@@ -496,8 +614,7 @@ const userDataMapper = {
       values: [id, removedPetTypes],
     };
 
-    const resultsRemovedPetType = await client.query(queryUserRemovedPetTypes);
-    debug('resultsRemovedPetType :', resultsRemovedPetType.rows);
+    await client.query(queryUserRemovedPetTypes);
 
     const userAfterSave = await userDataMapper.findUserById(id);
     // debug('userAfterSave', userAfterSave);

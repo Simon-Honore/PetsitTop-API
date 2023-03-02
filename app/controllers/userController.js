@@ -42,7 +42,11 @@ const userController = {
     debug('getOneUser');
     const searchedId = Number(request.params.id);
 
-    let searchedUser = await userDataMapper.findUserById(searchedId);
+    const searchedUser = await userDataMapper.findUserById(searchedId);
+
+    // On enlève le password de l'objet user
+    // eslint-disable-next-line prefer-const
+    let { password, ...userWithoutPwd } = searchedUser;
 
     // if user does not exist : 404
     if (!searchedUser) {
@@ -57,9 +61,9 @@ const userController = {
     const loggedInUser = request.user;
     debug('loggedInUser :', loggedInUser);
     if (Number(searchedId) === loggedInUser.id) {
-      searchedUser = { ...searchedUser, isOwner: true };
+      userWithoutPwd = { ...userWithoutPwd, isOwner: true };
     }
-    return response.status(200).json(searchedUser);
+    return response.status(200).json(userWithoutPwd);
   },
 
   /**
@@ -76,7 +80,8 @@ const userController = {
     // Test if email already exists in DB
     const isExistingUser = await userDataMapper.findUserByEmail(body.email);
     if (isExistingUser) {
-      return next(new Error('Email already exists'));
+      const error = { statusCode: 400, message: 'Email is already exists' };
+      return next(error);
     }
 
     // Hash user's password with Bcrypt
@@ -91,9 +96,12 @@ const userController = {
 
     const user = await userDataMapper.createUser(bodySafe);
 
-    debug('Created user : ', user);
+    // On enlève le password de l'objet user
+    const { password, ...userWithoutPwd } = user;
 
-    return response.status(201).json(user);
+    debug('Created user : ', userWithoutPwd);
+
+    return response.status(201).json(userWithoutPwd);
   },
 
   /**
@@ -116,26 +124,39 @@ const userController = {
     }
 
     // user details before modification :
-    const userBeforeSave = await userDataMapper.findUserById(id);
+    const userBeforeSave = await userDataMapper.findUserWithRoleAndPetTypeById(id);
     debug('userbeforeSave :', userBeforeSave);
     // if the modified user doesn't contain at least one role (required) => error
     const { role_petsitter, role_petowner } = request.body;
-    // eslint-disable-next-line consistent-return
-    userBeforeSave.roles.forEach((previousRole) => {
-      if ((role_petsitter === 'false' && role_petowner === 'false')
-      && (previousRole.name === 'petowner' || previousRole.name === 'petsitter')
-      ) {
-        const error = { statusCode: 400, message: 'At least one role is required' };
+
+    if ((role_petsitter === 'false' && role_petowner === 'false')
+      && (userBeforeSave.role_names.includes('petowner') || userBeforeSave.role_names.includes('petsitter'))
+    ) {
+      const error = { statusCode: 400, message: 'At least one role is required' };
+      return next(error);
+    }
+
+    // Test si l'email existe déjà (si l'email a été modifié)
+    const { email } = request.body;
+    debug(email);
+    // Si l'email a été modifié
+    if (email !== userBeforeSave.email) {
+      const emailAlreadyExists = await userDataMapper.findUserByEmail(email);
+      if (emailAlreadyExists) {
+        const error = { statusCode: 400, message: 'Email is already exists' };
         return next(error);
       }
-    });
+    }
 
     // if all OK, we update the user:
     const user = await userDataMapper.modifyUser(id, request.body, userBeforeSave);
 
-    debug('Updated user : ', user);
+    // On enlève le password de l'objet user
+    const { password, ...userWithoutPwd } = user;
 
-    return response.status(200).json(user);
+    debug('Updated user : ', userWithoutPwd);
+
+    return response.status(200).json(userWithoutPwd);
   },
 
 };

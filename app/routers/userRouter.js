@@ -80,9 +80,9 @@ const authenticateToken = require('../middlewares/authenticateToken');
  * @property {string} confirmPassword - user's password confirmation
  * @property {string} postal_code - user's postal code (adress)
  * @property {string} city - user's city (adress)
- * @property {boolean} role_petowner - if user's role is petowner
- * @property {boolean} role_petsitter - if user's role is petsitter
- * @property {boolean} availability - user's availability (if role petsitter)
+ * @property {string} role_petowner - 'true' if user's role is petowner / 'false'
+ * @property {string} role_petsitter - 'true' if user's role is petsitter / 'false'
+ * @property {string} availability - user's availability 'true'/'false'(if role petsitter)
  * @property {string} availability_details - user's availability details (if role petsitter)
  * @property {array<number>} pet_type - array of user's pet_type id
  */
@@ -97,9 +97,9 @@ const authenticateToken = require('../middlewares/authenticateToken');
  * @property {string} presentation - user's presentation
  * @property {string} postal_code - user's postal code (adress)
  * @property {string} city - user's city (adress)
- * @property {boolean} role_petowner - if user's role is petowner
- * @property {boolean} role_petsitter - if user's role is petsitter
- * @property {boolean} availability - user's availability (if role petsitter)
+ * @property {string} role_petowner - 'true' if user's role is petowner / 'false'
+ * @property {string} role_petsitter - 'true' if user's role is petsitter / 'false'
+ * @property {string} availability - user's availability 'true'/'false'(if role petsitter)
  * @property {string} availability_details - user's availability details (if role petsitter)
  * @property {array<string>} pet_type - array of user's pet_type id
  */
