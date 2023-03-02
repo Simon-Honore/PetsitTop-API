@@ -43,6 +43,7 @@ const authenticateToken = require('../middlewares/authenticateToken');
  * @property {boolean} availability - user's availability (if role petsitter)
  * @property {string} availability_details - user's availability details (if role petsitter)
  * @property {array<UserRole>} roles - array of user's roles (id and name)
+ * @property {array<UserPetType>} roles - array of user's pet_types (id and name) if role petsitter
  * @property {array<UserPet>} pets - array of user's pets (id, name, pet_type name, presentation)
  * @property {array<UserAd>} ads - array of user's ads (id, city, title, content)
  * @property {string} created_at - date of creation
@@ -174,6 +175,14 @@ const authenticateToken = require('../middlewares/authenticateToken');
  */
 
 /**
+ * a UserPetType type
+ *
+ * @typedef {object} UserPetType
+ * @property {number} id - pet_type id
+ * @property {string} name - pet_type name
+ */
+
+/**
  * a UserReqQuery type : to filter by department & pet_type
  *
  * @typedef {object} UserReqQuery
@@ -240,8 +249,7 @@ userRouter.get('/users', validate(userGetSchema, 'query'), controllerHandler(use
  *
  * @return {UserUpdated} 200 - success response
  * @return {object} 500 - internal server error
- * @return {object} 401 - unauthorized
- * @return {object} 403 - forbidden
+ * @return {object} 400 - bad request
  */
 userRouter.post('/users', validate(userPostSchema, 'body'), controllerHandler(userController.createUser));
 

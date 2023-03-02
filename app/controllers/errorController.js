@@ -6,6 +6,7 @@ const opetErrorController = {
     next(error);
   },
 
+  // eslint-disable-next-line no-unused-vars
   errorHandler(err, req, res, next) {
     // debug(err.originalError?.message || err.message);
     debug(err.message);

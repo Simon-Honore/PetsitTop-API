@@ -2,23 +2,65 @@
 const debug = require('debug')('opet:userDataMapper');
 const client = require('./database');
 
+/**
+ * a general User type
+ *
+ * @typedef {object} User
+ * @property {number} id - user id
+ * @property {string} first_name - user's first_name
+ * @property {string} last_name - user's last_name
+ * @property {string} email - user's email adress
+ * @property {string} password - user's encrypted password
+ * @property {string} postal_code - user's postal code (adress)
+ * @property {string} city - user's city (adress)
+ * @property {string} presentation - user's presentation
+ * @property {boolean} availability - user's availability (if role petsitter)
+ * @property {string} availability_details - user's availability details (if role petsitter)
+ * @property {string} created_at - date of creation
+ * @property {string} updated_at - date of last update
+ */
+
+/**
+ * a get User type
+ *
+ * @typedef {object} UserGet
+ * @property {number} id - user id
+ * @property {string} first_name - user's first_name
+ * @property {string} last_name - user's last_name
+ * @property {string} email - user's email adress
+ * @property {string} postal_code - user's postal code (adress)
+ * @property {string} city - user's city (adress)
+ * @property {string} presentation - user's presentation
+ * @property {boolean} availability - user's availability (if role petsitter)
+ * @property {string} availability_details - user's availability details (if role petsitter)
+ * @property {array<UserRole>} roles - array of user's roles (id and name)
+ * @property {array<UserPetType>} roles - array of user's pet_types (id and name) if role petsitter
+ * @property {array<UserPet>} pets - array of user's pets (id, name, pet_type name, presentation)
+ * @property {array<UserAd>} ads - array of user's ads (id, city, title, content)
+ * @property {string} created_at - date of creation
+ * @property {string} updated_at - date of last update
+ */
+
 const userDataMapper = {
-  /**
-   * Fetch all users from database
-   * @returns {array} array of users
-   */
-  findAllUsers: async () => {
-    debug('findAllUsers');
-    const query = {
-      text: 'SELECT * FROM "user" ORDER BY "id"',
-    };
-    const results = await client.query(query);
-    return results.rows;
-  },
+
+  // /**
+  //  * Fetches all users from database
+  //  *
+  //  * @returns {array<User>} - array of users
+  //  */
+  // findAllUsers: async () => {
+  //   debug('findAllUsers');
+  //   const query = {
+  //     text: 'SELECT * FROM "user" ORDER BY "id"',
+  //   };
+  //   const results = await client.query(query);
+  //   return results.rows;
+  // },
 
   /**
-   * Fetch available petsitters from database
-   * @returns {array} array of users
+   * Fetches available petsitters from database
+   *
+   * @returns {array<UserResearched>} array of users as available petsitters + their pet_types
    */
   findAllAvailablePetsitters: async () => {
     debug('findAllAvailablePetsitters');
@@ -43,8 +85,9 @@ const userDataMapper = {
   },
 
   /**
-   * Fetch available petsitters from database : filter by department and pet type
-   * @returns {array} array of users
+   * Fetches available petsitters from database filtered by department & pet_type
+   *
+   * @returns {array<UserResearched>} array of users as available petsitters + their pet_types
    */
   findAllAvailablePetsittersFilter: async (department, petType) => {
     debug('findAllAvailablePetsittersFilter');
@@ -93,26 +136,34 @@ const userDataMapper = {
   //   return results.rows; // retourne un tableau contenant des objets (chaque pet = un objet)
   // },
 
-  findAdsByUserId: async (id) => {
-    debug('findAdsByUserId');
-    debug('id', id);
-    const query = {
-      text: `
-        SELECT
-          "ad"."id",
-          "ad"."title",
-          "ad"."content",
-          "ad"."city",
-          "ad"."postal_code"
-        FROM "ad"        
-        WHERE "ad"."user_id" = $1
-      `,
-      values: [id],
-    };
-    const results = await client.query(query);
-    return results.rows; // retourne un tableau contenant des objets (chaque ad = un objet)
-  },
+  // -------FONCTION CI-DESSOUS INUTILE CAR EXISTE DANS adDataMapper ?---------
+  // findAdsByUserId: async (id) => {
+  //   debug('findAdsByUserId');
+  //   debug('id', id);
+  //   const query = {
+  //     text: `
+  //       SELECT
+  //         "ad"."id",
+  //         "ad"."title",
+  //         "ad"."content",
+  //         "ad"."city",
+  //         "ad"."postal_code"
+  //       FROM "ad"
+  //       WHERE "ad"."user_id" = $1
+  //     `,
+  //     values: [id],
+  //   };
+  //   const results = await client.query(query);
+  //   return results.rows; // retourne un tableau contenant des objets (chaque ad = un objet)
+  // },
 
+  /**
+   * fetches a user entry according to its email
+   *
+   * @param {number} email - user's email
+   *
+   * @returns {User} a user
+   */
   findUserByEmail: async (email) => {
     debug('findUserByEmail');
     debug('email', email);
@@ -127,6 +178,13 @@ const userDataMapper = {
     return results.rows[0];
   },
 
+  /**
+   * fetches a user entry according to its id
+   *
+   * @param {number} id - user's id
+   *
+   * @returns {UserGet} a user with its roles, pet_types (if petsitter), pets, ads
+   */
   findUserById: async (id) => {
     debug('findUserById');
     debug('id', id);
@@ -158,7 +216,7 @@ const userDataMapper = {
       values: [id],
     };
     const results = await client.query(query);
-    debug(results.rows[0]);
+    debug('User by id : ', results.rows[0]);
 
     return results.rows[0];
   },
@@ -176,7 +234,7 @@ const userDataMapper = {
         LEFT JOIN "user_has_role" ON "user"."id"="user_has_role"."user_id"
         LEFT JOIN "role" ON "user_has_role"."role_id"="role"."id"
         LEFT JOIN "user_has_pet_type" ON "user"."id"="user_has_pet_type"."user_id"
-        WHERE 
+        WHERE
           "user"."id" = $1
         GROUP BY "user"."id";
       `,
@@ -326,72 +384,75 @@ const userDataMapper = {
     // array of promises of the following async queries :
     const promises = [];
 
-    // 1) Check if role_petsitter already exists for this user
-    if (userBeforeSave.role_names.includes('petsitter')) {
+    userBeforeSave.roles.forEach((previousRole) => {
+      debug('user before Save :', userBeforeSave);
+      debug('previousRole :', previousRole);
+      // 1) Check if role_petsitter already exists for this user
+      if (previousRole.name === 'petsitter') {
       // debug('userBeforeChangeRole.includes("petsitter")');
 
-      // if it does AND role_petsitter=false in body : we delete the role
-      if (role_petsitter === 'false') {
+        // if it does AND role_petsitter=false in body : we delete the role
+        if (role_petsitter === 'false') {
         // debug('role_petsitter === "false"');
-        const queryUserRole = {
-          text: `
+          const queryUserRole = {
+            text: `
             DELETE FROM "user_has_role"
             WHERE "user_id" = $1
             AND "role_id" = 1
           `,
-          values: [id],
-        };
+            values: [id],
+          };
 
-        promises.push(client.query(queryUserRole));
-      }
-    } else {
+          promises.push(client.query(queryUserRole));
+        }
+      } else {
       // 1bis) Sinon (role petsitter est absent de role_names)
       // et si role_petsitter est true
-      const queryUserRole = {
-        text: `
+        const queryUserRole = {
+          text: `
           INSERT INTO "user_has_role"("user_id", "role_id")
           VALUES ($1, 1)
           RETURNING *;
         `,
-        values: [id],
-      };
-
-      promises.push(client.query(queryUserRole));
-    }
-
-    // 2) Tester si le role petowner existe déjà
-    if (userBeforeSave.role_names.includes('petowner')) {
-      // debug('userBeforeChangeRole.includes("petowner")');
-
-      // Si oui, et que le nouveau role est false, on le supprime
-      if (role_petowner === 'false') {
-        // debug('role_petowner === "false"');
-        const queryUserRole = {
-          text: `
-            DELETE FROM "user_has_role"
-            WHERE "user_id" = $1
-            AND "role_id" = 2
-          `,
           values: [id],
         };
 
         promises.push(client.query(queryUserRole));
       }
-    } else {
+
+      // 2) Tester si le role petowner existe déjà
+      if (previousRole.name === 'petowner') {
+        debug('previousRole.name === "petowner"');
+
+        // Si oui, et que le nouveau role est false, on le supprime
+        if (role_petowner === 'false') {
+          debug('role_petowner === "false"');
+          const queryUserRole = {
+            text: `
+            DELETE FROM "user_has_role"
+            WHERE "user_id" = $1
+            AND "role_id" = 2
+          `,
+            values: [id],
+          };
+
+          promises.push(client.query(queryUserRole));
+        }
+      } else {
       // 2bis) Sinon (role petowner est absent de role_names)
       // et si role_petowner est true
-      const queryUserRole = {
-        text: `
+        const queryUserRole = {
+          text: `
           INSERT INTO "user_has_role"("user_id", "role_id")
           VALUES ($1, 2)
           RETURNING *;
         `,
-        values: [id],
-      };
+          values: [id],
+        };
 
-      promises.push(client.query(queryUserRole));
-    }
-
+        promises.push(client.query(queryUserRole));
+      }
+    });
     await Promise.all(promises);
 
     // ---------
@@ -401,11 +462,15 @@ const userDataMapper = {
     // we update pet_types in user_has_pet_type (2 cases):
     // pet_types is an array of string, so first we cast to numbers:
     const petTypesToNb = pet_type.map(Number);
-    debug('tableau 1 :', userBeforeSave.pet_types_ids);
+    const previousPetTypesArray = [];
+    userBeforeSave.pet_types.forEach((previousPetType) => {
+      previousPetTypesArray.push(previousPetType.id);
+    });
+    debug('tableau 1 :', previousPetTypesArray);
     debug('tableau 2: ', petTypesToNb);
 
     // 1) pour les pet_types cochés à la modif, on ajoute les lignes à ce user dans user_has_pet_type
-    const addedPetTypes = petTypesToNb.filter((type) => !userBeforeSave.pet_types_ids.includes(type));
+    const addedPetTypes = petTypesToNb.filter((type) => !previousPetTypesArray.includes(type));
     // console.log(valeursNouvelles); >> insert
     debug('valeurs ajoutées :', addedPetTypes);
     // we add the pet-types for this user in the table "user_has_pet_type":
@@ -421,7 +486,7 @@ const userDataMapper = {
     debug('resultsAddedPetType :', resultsAddedPetType.rows);
 
     // 2) pour les pet_types décochés à la modif on delete les lignes à ce user dans user_has_pet_type
-    const removedPetTypes = userBeforeSave.pet_types_ids.filter((type) => !petTypesToNb.includes(type));
+    const removedPetTypes = previousPetTypesArray.filter((type) => !petTypesToNb.includes(type));
     debug('valeurs supprimées :', removedPetTypes);
 
     const queryUserRemovedPetTypes = {
