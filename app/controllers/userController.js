@@ -159,6 +159,13 @@ const userController = {
     return response.status(200).json(userWithoutPwd);
   },
 
+  /**
+   * deletes an entry from "user" table
+   *
+   * @param {Object} request
+   * @param {Object} response
+   * @param {function} next - go to next mw function
+   */
   async deleteUser(request, response, next) {
     debug('deleteUserById');
     const { id } = request.params; // id of the user to delete
