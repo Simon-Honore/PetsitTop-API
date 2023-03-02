@@ -416,7 +416,6 @@ const userDataMapper = {
     debug('valeurs ajoutées :', addedPetTypes);
     // we add the pet-types for this user in the table "user_has_pet_type":
 
-
     const queryUserAddedPetTypes = {
       text: `
         SELECT * FROM new_user_has_pet_type($1, $2);
@@ -445,6 +444,18 @@ const userDataMapper = {
     // debug('userAfterSave', userAfterSave);
 
     return userAfterSave;
+  },
+
+  deleteUserById: async (id) => {
+    debug(`deleteUserById(${id})`);
+    const query = {
+      text: `
+        DELETE FROM "user"
+        WHERE id = $1
+      `,
+      values: [id],
+    };
+    await client.query(query);
   },
 };
 

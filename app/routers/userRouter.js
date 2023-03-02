@@ -29,6 +29,7 @@ const authenticateToken = require('../middlewares/authenticateToken');
 // User routes
 userRouter.get('/users/:id([0-9]+)', authenticateToken, controllerHandler(userController.getOneUser));
 userRouter.put('/users/:id([0-9]+)', authenticateToken, validate(userPutSchema, 'body'), controllerHandler(userController.modifyUser));
+userRouter.delete('/users/:id([0-9]+)', authenticateToken, controllerHandler(userController.deleteUser));
 userRouter.get('/users', validate(userGetSchema, 'query'), controllerHandler(userController.getSearchResults));
 userRouter.post('/users', validate(userPostSchema, 'body'), controllerHandler(userController.createUser));
 
