@@ -415,7 +415,10 @@ const userDataMapper = {
 
     // we add the pet-types for this user in the table "user_has_pet_type":
     // pet_types is an array of string, so first we cast to numbers:
-    const petTypesToNumbers = pet_type.map(Number);
+    let petTypesToNumbers = [];
+    if (pet_type) { // Si pet_type est vide, on ne fait rien
+      petTypesToNumbers = pet_type.map(Number);
+    }
 
     const queryUserPetTypes = {
       text: `
@@ -620,6 +623,23 @@ const userDataMapper = {
     // debug('userAfterSave', userAfterSave);
 
     return userAfterSave;
+  },
+
+  /**
+   * deletes a user according to it's id
+   *
+   * @param {number} id - the user's id
+   */
+  deleteUserById: async (id) => {
+    debug(`deleteUserById(${id})`);
+    const query = {
+      text: `
+        DELETE FROM "user"
+        WHERE id = $1
+      `,
+      values: [id],
+    };
+    await client.query(query);
   },
 };
 

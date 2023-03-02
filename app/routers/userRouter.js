@@ -226,6 +226,19 @@ userRouter.get('/users/:id([0-9]+)', authenticateToken, controllerHandler(userCo
 userRouter.put('/users/:id([0-9]+)', authenticateToken, validate(userPutSchema, 'body'), controllerHandler(userController.modifyUser));
 
 /**
+ * DELETE /users/{userId}
+ *
+ * @summary delete a user by its id
+ * @tags Users
+ *
+ * @param {number} userId.path - user id
+ *
+ * @return {object} 204 - success response
+ * @return {object} 500 - internal server error
+ */
+userRouter.delete('/users/:id([0-9]+)', authenticateToken, controllerHandler(userController.deleteUser));
+
+/**
  * GET /users
  *
  * @summary get all users who are available petsitters (filtered by department and pet_type)

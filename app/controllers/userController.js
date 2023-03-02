@@ -159,6 +159,31 @@ const userController = {
     return response.status(200).json(userWithoutPwd);
   },
 
+  async deleteUser(request, response, next) {
+    debug('deleteUserById');
+    const { id } = request.params; // id of the user to delete
+
+    // If the ad does not exist, we return an error 404
+    const isExistingUser = await userDataMapper.findUserById(id);
+    if (!isExistingUser) {
+      debug(`User ${id} does not exists`);
+      return next();
+    }
+
+    // Test if the user has the right to access this route
+    const loggedInUser = request.user;
+    // If the "ad"."user_id" is different from "loggedInUser"."id", we return an error 403
+    if (loggedInUser.id !== isExistingUser.id) {
+      const error = { statusCode: 403, message: 'Forbidden' };
+      return next(error);
+    }
+
+    // Delete the ad
+    await userDataMapper.deleteUserById(id);
+
+    // Response
+    return response.status(204).send();
+  },
 };
 
 module.exports = userController;

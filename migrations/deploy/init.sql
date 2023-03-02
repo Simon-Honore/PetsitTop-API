@@ -42,7 +42,7 @@ CREATE TABLE "pet" (
   "id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   "name" TEXT NOT NULL,
   "presentation" TEXT,
-  "user_id" INT REFERENCES "user"("id"),
+  "user_id" INT REFERENCES "user"("id") ON DELETE CASCADE,
   "pet_type_id" INT REFERENCES "pet_type"("id"), 
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT now(),
   "updated_at" TIMESTAMPTZ
@@ -54,7 +54,7 @@ CREATE TABLE "ad" (
   "content" TEXT NOT NULL,
   "city" TEXT NOT NULL,
   "postal_code" postal_code_fr NOT NULL,
-  "user_id" INT REFERENCES "user"("id"),
+  "user_id" INT REFERENCES "user"("id") ON DELETE CASCADE,
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT now(),
   "updated_at" TIMESTAMPTZ
 );
@@ -68,7 +68,7 @@ CREATE TABLE "role" (
 
 CREATE TABLE "user_has_pet_type" (
   "id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  "user_id" INT REFERENCES "user"("id"),
+  "user_id" INT REFERENCES "user"("id") ON DELETE CASCADE,
   "pet_type_id" INT REFERENCES "pet_type"("id"),
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT now(),
   "updated_at" TIMESTAMPTZ,
@@ -77,7 +77,7 @@ CREATE TABLE "user_has_pet_type" (
 
 CREATE TABLE "user_has_role" (
   "id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  "user_id" INT REFERENCES "user"("id"),
+  "user_id" INT REFERENCES "user"("id") ON DELETE CASCADE,
   "role_id" INT REFERENCES "role"("id"),
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT now(),
   "updated_at" TIMESTAMPTZ,
