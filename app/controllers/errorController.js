@@ -1,4 +1,5 @@
 const debug = require('debug')('opet:errorController');
+const logger = require('../helpers/logger');
 
 const opetErrorController = {
   error404(_, res, next) {
@@ -9,6 +10,7 @@ const opetErrorController = {
   // eslint-disable-next-line no-unused-vars
   errorHandler(err, req, res, next) {
     // debug(err.originalError?.message || err.message);
+    logger.error(err.message);
     debug(err.message);
     let status = err.statusCode || 500; // 500 : Internal Server Error
     let { message } = err;

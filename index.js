@@ -4,6 +4,7 @@ require('dotenv').config(); // variables d'environnement
 const express = require('express'); // express
 const cors = require('cors'); // cors
 const expressSwagger = require('express-jsdoc-swagger');
+const logger = require('./app/helpers/logger');
 const path = require('path');
 
 const router = require('./app/routers'); // router
@@ -59,9 +60,15 @@ app.use('/', cors({
 //   }
 // });
 
+// app.use((request, response, next) => {
+//   logger.trace({ method: request.method, url: request.url }, 'incoming request');
+//   next();
+// });
+
 // Routage
 app.use(router);
 
 app.listen(PORT, () => {
   debug(`App listening on port http://localhost:${PORT}`);
+  logger.info(`Server ready: http://localhost:${PORT}`);
 });
