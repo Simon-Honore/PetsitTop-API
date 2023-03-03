@@ -158,27 +158,27 @@ const userDataMapper = {
    *
    * @returns {array<UserResearched>} array of users as available petsitters + their pet_types
    */
-  findAllAvailablePetsitters: async () => {
-    debug('findAllAvailablePetsitters');
-    const query = {
-      text: `
-        SELECT 
-          "user".*,
-          ARRAY_AGG("pet_type"."name") AS "pet_types",
-          "role"."name" AS "role_name"
-        FROM
-          "user"
-        INNER JOIN "user_has_pet_type" ON "user"."id"="user_has_pet_type"."user_id"
-        INNER JOIN "pet_type" ON "user_has_pet_type"."pet_type_id"="pet_type"."id"
-        INNER JOIN "user_has_role" ON "user"."id"="user_has_role"."user_id"
-        INNER JOIN "role" ON "user_has_role"."role_id"="role"."id"
-        WHERE "user"."availability" = true AND "role"."name" = 'petsitter'
-        GROUP BY "user"."id", "role"."name";
-      `,
-    };
-    const results = await client.query(query);
-    return results.rows;
-  },
+  // findAllAvailablePetsitters: async () => {
+  //   debug('findAllAvailablePetsitters');
+  //   const query = {
+  //     text: `
+  //       SELECT
+  //         "user".*,
+  //         ARRAY_AGG("pet_type"."name") AS "pet_types",
+  //         "role"."name" AS "role_name"
+  //       FROM
+  //         "user"
+  //       INNER JOIN "user_has_pet_type" ON "user"."id"="user_has_pet_type"."user_id"
+  //       INNER JOIN "pet_type" ON "user_has_pet_type"."pet_type_id"="pet_type"."id"
+  //       INNER JOIN "user_has_role" ON "user"."id"="user_has_role"."user_id"
+  //       INNER JOIN "role" ON "user_has_role"."role_id"="role"."id"
+  //       WHERE "user"."availability" = true AND "role"."name" = 'petsitter'
+  //       GROUP BY "user"."id", "role"."name";
+  //     `,
+  //   };
+  //   const results = await client.query(query);
+  //   return results.rows;
+  // },
 
   /**
    * Fetches available petsitters from database filtered by department & pet_type
@@ -190,7 +190,17 @@ const userDataMapper = {
     const query = {
       text: `
         SELECT 
-          "user".*,
+        "user"."id",
+        "user"."first_name",
+        "user"."last_name",
+        "user"."email",
+        "user"."postal_code",
+        "user"."city",
+        "user"."presentation",
+        "user"."availability",
+        "user"."availability_details",
+        "user"."created_at",
+        "user"."updated_at",
           ARRAY_AGG("pet_type"."name") AS "pet_types",
           "role"."name" AS "role_name"
         FROM
@@ -211,47 +221,6 @@ const userDataMapper = {
     const results = await client.query(query);
     return results.rows;
   },
-
-  // findPetsByUserId: async (id) => {
-  //   debug('findPetsByUserId');
-  //   debug('id', id);
-  //   const query = {
-  //     text: `
-  //       SELECT
-  //         "pet"."id",
-  //         "pet"."name",
-  //         "pet"."presentation",
-  //         "pet_type"."name" AS "pet_type"
-  //       FROM "pet"
-  //       JOIN "pet_type" ON "pet"."pet_type_id"="pet_type"."id"
-  //       WHERE "pet"."user_id" = $1;
-  //     `,
-  //     values: [id],
-  //   };
-  //   const results = await client.query(query);
-  //   return results.rows; // retourne un tableau contenant des objets (chaque pet = un objet)
-  // },
-
-  // -------FONCTION CI-DESSOUS INUTILE CAR EXISTE DANS adDataMapper ?---------
-  // findAdsByUserId: async (id) => {
-  //   debug('findAdsByUserId');
-  //   debug('id', id);
-  //   const query = {
-  //     text: `
-  //       SELECT
-  //         "ad"."id",
-  //         "ad"."title",
-  //         "ad"."content",
-  //         "ad"."city",
-  //         "ad"."postal_code"
-  //       FROM "ad"
-  //       WHERE "ad"."user_id" = $1
-  //     `,
-  //     values: [id],
-  //   };
-  //   const results = await client.query(query);
-  //   return results.rows; // retourne un tableau contenant des objets (chaque ad = un objet)
-  // },
 
   /**
    * fetches a user entry according to its email
@@ -287,7 +256,17 @@ const userDataMapper = {
     const query = {
       text: `
       SELECT 
-        "user".*,
+        "user"."id",
+        "user"."first_name",
+        "user"."last_name",
+        "user"."email",
+        "user"."postal_code",
+        "user"."city",
+        "user"."presentation",
+        "user"."availability",
+        "user"."availability_details",
+        "user"."created_at",
+        "user"."updated_at",
         jsonb_agg(DISTINCT jsonb_build_object('id', "role"."id",'name', "role"."name")) AS "roles",
         COALESCE(jsonb_agg(DISTINCT jsonb_build_object('id', "pet_type_to_petsit"."id",'name', "pet_type_to_petsit"."name")) FILTER (WHERE "pet_type_to_petsit"."id" IS NOT NULL), '[]') AS "pet_types",
         COALESCE(jsonb_agg(DISTINCT jsonb_build_object('id', "pet"."id",'name', "pet"."name", 'presentation', "pet"."presentation", 'pet_type', "pet_type_qualify"."name")) FILTER (WHERE "pet"."id" IS NOT NULL), '[]') AS "pets",
