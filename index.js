@@ -14,6 +14,7 @@ const swaggerOptions = {
   info: {
     version: '1.0.0',
     title: 'Petsitter Friendly',
+    description: 'This is an API for an app to find and contact petsitters',
   },
   baseDir: path.join(__dirname, 'app'),
   filesPattern: './**/*.js',
