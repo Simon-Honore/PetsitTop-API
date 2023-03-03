@@ -28,7 +28,7 @@ const adDataMapper = {
    *
    * @returns {array<Ad>} array of ad entries
    */
-  findAllAds: async () => {
+  findAllAds: async (limit, start) => {
     const query = {
       text: `
         SELECT
@@ -37,7 +37,10 @@ const adDataMapper = {
         FROM "ad"
         LEFT JOIN "user" ON "ad"."user_id" = "user".id
         GROUP BY "ad".id
+        LIMIT $1
+        OFFSET $2
       `,
+      values: [limit, start],
     };
     const results = await client.query(query);
     return results.rows;

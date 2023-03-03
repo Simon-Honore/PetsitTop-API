@@ -11,10 +11,27 @@ const adController = {
    * @param {Object} _
    * @param {Object} response
    */
-  async getAllAds(_, response) {
+  async getAllAds(request, response) {
     debug('getAllAds');
-    const ads = await adDataMapper.findAllAds();
-    response.status(200).json(ads);
+    // const { limit, start } = request.query;
+
+    // Pagination par défaut (si aucune valeur n'est passée en paramètre)
+    let limit = 10;
+    let start = 0;
+    // Valeurs de la pagination envoyées par le client
+    if (request.query.limit && request.query.start) {
+      limit = Number(request.query.limit);
+      start = Number(request.query.start);
+    }
+
+    const ads = await adDataMapper.findAllAds(limit, start);
+
+    response.status(200).json({
+      results: ads,
+      size: ads.length, // Nombre de résultats affichés
+      limit, // Nombre de résultats max par page
+      start, // Offset
+    });
   },
 
   /**
