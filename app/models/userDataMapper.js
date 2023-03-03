@@ -446,33 +446,14 @@ const userDataMapper = {
       role_petsitter, role_petowner, pet_type, ...modifyUserObj
     } = modifyObj;
 
-    let results = {};
-
     // Modify user in table "user"
-
-    // Check if unchanged email : use update_user function
-    if (userBeforeSave.email === modifyObj.email) {
-      debug('email identique');
-      const { email, ...modifyObjNoEmail } = modifyUserObj;
-      const queryUser = {
-        text: `
-          SELECT * FROM update_user($1)
-        `,
-        values: [{ ...modifyObjNoEmail, id }],
-      };
-      results = await client.query(queryUser);
-    } else {
-      // use update_userWithEmail function if new email
-      debug('email différent');
-      const queryUser = {
-        text: `
-          SELECT * FROM update_userWithEmail($1)
-        `,
-        values: [{ ...modifyUserObj, id }],
-      };
-      results = await client.query(queryUser);
-    }
-    // const { id: userId } = results.rows[0];
+    const queryUser = {
+      text: `
+        SELECT * FROM update_user($1)
+      `,
+      values: [{ ...modifyUserObj, id }],
+    };
+    const results = await client.query(queryUser);
     debug('userAfterSave', results.rows[0]);
 
     // Modify role in table "user_has_role"

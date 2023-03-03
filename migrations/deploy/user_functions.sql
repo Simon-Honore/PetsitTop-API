@@ -45,8 +45,8 @@ RETURNS SETOF "user_has_pet_type" AS $$
   END;
 $$ LANGUAGE plpgsql STRICT;
 
--- Function to modify a user with email
-CREATE OR REPLACE FUNCTION update_userwithemail(user_data json) RETURNS "user" AS $$
+-- Function to modify a user
+CREATE OR REPLACE FUNCTION update_user(user_data json) RETURNS "user" AS $$
   UPDATE "user" SET
     "first_name" = user_data->>'first_name',
     "last_name" = user_data->>'last_name',
@@ -62,34 +62,18 @@ CREATE OR REPLACE FUNCTION update_userwithemail(user_data json) RETURNS "user" A
 
 $$ LANGUAGE sql STRICT;
 
--- Function to modify a user without email
-CREATE OR REPLACE FUNCTION update_user(user_data json) RETURNS "user" AS $$
-  UPDATE "user" SET
-    "first_name" = user_data->>'first_name',
-    "last_name" = user_data->>'last_name',
-    "postal_code" = (user_data->>'postal_code')::postal_code_fr,
-    "city" = user_data->>'city',
-    "presentation" = user_data->>'presentation',
-    "availability" = (user_data->>'availability')::boolean,
-    "availability_details" = user_data->>'availability_details',
-    "updated_at" = now()
-  WHERE "id" = (user_data->>'id')::int
-  RETURNING *;
-
-$$ LANGUAGE sql STRICT;
-
-    CREATE OR REPLACE FUNCTION delete_user_has_pet_type(user_id_data int, pet_type_data int[])
-    RETURNS VOID AS $$
-      DECLARE
-        x int;
-      BEGIN
-        FOREACH x IN ARRAY pet_type_data
-        LOOP
-          DELETE FROM "user_has_pet_type"
-          WHERE "user_id" = "user_id_data" AND "pet_type_id" = x;
-        END LOOP;
-        RETURN;
-      END;
-    $$ LANGUAGE plpgsql STRICT;
+  CREATE OR REPLACE FUNCTION delete_user_has_pet_type(user_id_data int, pet_type_data int[])
+  RETURNS VOID AS $$
+    DECLARE
+      x int;
+    BEGIN
+      FOREACH x IN ARRAY pet_type_data
+      LOOP
+        DELETE FROM "user_has_pet_type"
+        WHERE "user_id" = "user_id_data" AND "pet_type_id" = x;
+      END LOOP;
+      RETURN;
+    END;
+  $$ LANGUAGE plpgsql STRICT;
 
 COMMIT;
