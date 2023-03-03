@@ -63,20 +63,27 @@ const petDataMapper = {
    * @param {number} userId - user id
    * @returns {array<Pet>} array of pets
    */
-  async findAllPetsByUserId(userId) {
-    debug('findAllPetsByUserId');
-    debug('userId :', userId);
+  // async findAllPetsByUserId(userId) {
+  //   debug('findAllPetsByUserId');
+  //   debug('userId :', userId);
 
-    const query = {
-      text: `
-        SELECT * FROM "pet" WHERE "user_id"=$1;
-        `,
-      values: [userId],
-    };
+  //   const query = {
+  //     text: `
+  //       SELECT
+  //         "pet"."id",
+  //         "pet"."name",
+  //         "pet"."presentation",
+  //         "pet_type"."name" AS "pet_type"
+  //       FROM "pet"
+  //       JOIN "pet_type" ON "pet"."pet_type_id"="pet_type"."id"
+  //       WHERE "pet"."user_id" = $1;
+  //       `,
+  //     values: [userId],
+  //   };
 
-    const results = await client.query(query);
-    return results.rows;
-  },
+  //   const results = await client.query(query);
+  //   return results.rows;
+  // },
 
   /**
    * adds (creates) a pet for a user

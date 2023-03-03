@@ -44,10 +44,6 @@ const userController = {
 
     const searchedUser = await userDataMapper.findUserById(searchedId);
 
-    // On enlève le password de l'objet user
-    // eslint-disable-next-line prefer-const
-    let { password, ...userWithoutPwd } = searchedUser;
-
     // if user does not exist : 404
     if (!searchedUser) {
       debug(`User ${searchedId} does not exists`);
@@ -61,9 +57,9 @@ const userController = {
     const loggedInUser = request.user;
     debug('loggedInUser :', loggedInUser);
     if (Number(searchedId) === loggedInUser.id) {
-      userWithoutPwd = { ...userWithoutPwd, isOwner: true };
+      searchedUser.isOwner = true;
     }
-    return response.status(200).json(userWithoutPwd);
+    return response.status(200).json(searchedUser);
   },
 
   /**
@@ -151,12 +147,9 @@ const userController = {
     // if all OK, we update the user:
     const user = await userDataMapper.modifyUser(id, request.body, userBeforeSave);
 
-    // On enlève le password de l'objet user
-    const { password, ...userWithoutPwd } = user;
+    debug('Updated user : ', user);
 
-    debug('Updated user : ', userWithoutPwd);
-
-    return response.status(200).json(userWithoutPwd);
+    return response.status(200).json(user);
   },
 
   /**
@@ -170,7 +163,7 @@ const userController = {
     debug('deleteUserById');
     const { id } = request.params; // id of the user to delete
 
-    // If the ad does not exist, we return an error 404
+    // If the user does not exist, we return an error 404
     const isExistingUser = await userDataMapper.findUserById(id);
     if (!isExistingUser) {
       debug(`User ${id} does not exists`);
@@ -179,13 +172,13 @@ const userController = {
 
     // Test if the user has the right to access this route
     const loggedInUser = request.user;
-    // If the "ad"."user_id" is different from "loggedInUser"."id", we return an error 403
+    // If the "isExistingUser"."id" is different from "loggedInUser"."id", we return an error 403
     if (loggedInUser.id !== isExistingUser.id) {
       const error = { statusCode: 403, message: 'Forbidden' };
       return next(error);
     }
 
-    // Delete the ad
+    // Delete the user
     await userDataMapper.deleteUserById(id);
 
     // Response
