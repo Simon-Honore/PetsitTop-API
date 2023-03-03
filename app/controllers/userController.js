@@ -132,10 +132,10 @@ const userController = {
       return next(error);
     }
 
-    // Test si l'email existe déjà (si l'email a été modifié)
+    // check if email already exists in DB (if email is changed)
     const { email } = request.body;
     debug(email);
-    // Si l'email a été modifié
+    // if email is changed
     if (email !== userBeforeSave.email) {
       const emailAlreadyExists = await userDataMapper.findUserByEmail(email);
       if (emailAlreadyExists) {

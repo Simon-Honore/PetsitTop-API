@@ -235,6 +235,8 @@ userRouter.put('/users/:id([0-9]+)', authenticateToken, validate(userPutSchema, 
  *
  * @return {object} 204 - success response
  * @return {object} 500 - internal server error
+ *
+ * @security BearerAuth
  */
 userRouter.delete('/users/:id([0-9]+)', authenticateToken, controllerHandler(userController.deleteUser));
 
