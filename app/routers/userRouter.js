@@ -48,6 +48,7 @@ const authenticateToken = require('../middlewares/authenticateToken');
  * @property {array<UserAd>} ads - array of user's ads (id, city, title, content)
  * @property {string} created_at - date of creation
  * @property {string} updated_at - date of last update
+ * @property {boolean} isOwner - isOwner:true (added if loggedIn user wants its own profile page)
  */
 
 /**

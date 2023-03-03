@@ -39,6 +39,7 @@ const client = require('./database');
  * @property {array<UserAd>} ads - array of user's ads (id, city, title, content)
  * @property {string} created_at - date of creation
  * @property {string} updated_at - date of last update
+ * @property {boolean} isOwner - isOwner:true (added if loggedIn user wants its own profile page)
  */
 
 /**
@@ -248,7 +249,8 @@ const userDataMapper = {
    *
    * @param {number} id - user's id
    *
-   * @returns {UserGet} a user with its roles, pet_types (if petsitter), pets, ads
+   * @returns {UserGet} a user with its roles, pet_types (if petsitter),
+   * pets, ads, and isOwner: true (if loggedInUser)
    */
   findUserById: async (id) => {
     debug('findUserById');
