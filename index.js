@@ -3,6 +3,7 @@ const debug = require('debug')('opet:server'); // to log debug messages
 require('dotenv').config(); // variables d'environnement
 const express = require('express'); // express
 const cors = require('cors'); // cors
+const rateLimit = require("express-rate-limit"); // Limite rate
 const expressSwagger = require('express-jsdoc-swagger');
 const path = require('path');
 
@@ -44,8 +45,17 @@ app.use(express.json());
 
 // For cross origin requests
 app.use('/', cors({
-  origin: '*', // allow all origins
+  origin: process.env.CORS_DOMAINS ?? '*', // allow all origins
 }), router);
+
+// On limite le nombre de requête des clients
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
+app.use(limiter);
 
 // pour ne plus utiliser controllerHandler on pass next (=tous les middlewares suivants) dans try:
 // app.use((req, res, next) => {
