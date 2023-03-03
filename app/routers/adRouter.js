@@ -5,6 +5,7 @@ const adController = require('../controllers/adController');
 const controllerHandler = require('../controllers/controllerHandler');
 
 const validate = require('../validations/validator');
+const { get: adGetSchema } = require('../validations/schemas/ad.schema');
 const { post: adPostSchema } = require('../validations/schemas/ad.schema');
 const { put: adPutSchema } = require('../validations/schemas/ad.schema');
 
@@ -96,7 +97,7 @@ adRouter.post('/user/:id([0-9]+)/ads', authenticateToken, validate(adPostSchema,
  *
  * @security BearerAuth
  */
-adRouter.get('/ads', authenticateToken, controllerHandler(adController.getAllAds));
+adRouter.get('/ads', authenticateToken, validate(adGetSchema, 'query'), controllerHandler(adController.getAllAds));
 
 /**
  * PUT /ads/{id}

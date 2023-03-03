@@ -1,6 +1,19 @@
 const Joi = require('joi');
 
 const schemas = {
+  get: Joi.object({
+    limit: Joi
+      .number()
+      .integer()
+      .min(1)
+      .max(25)
+      .default(10),
+    start: Joi
+      .number()
+      .integer()
+      .min(0)
+      .default(0),
+  }),
   post: Joi.object({
     title: Joi
       .string()
