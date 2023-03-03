@@ -2,23 +2,161 @@
 const debug = require('debug')('opet:userDataMapper');
 const client = require('./database');
 
+/**
+ * a general User type
+ *
+ * @typedef {object} User
+ * @property {number} id - user id
+ * @property {string} first_name - user's first_name
+ * @property {string} last_name - user's last_name
+ * @property {string} email - user's email adress
+ * @property {string} password - user's encrypted password
+ * @property {string} postal_code - user's postal code (adress)
+ * @property {string} city - user's city (adress)
+ * @property {string} presentation - user's presentation
+ * @property {boolean} availability - user's availability (if role petsitter)
+ * @property {string} availability_details - user's availability details (if role petsitter)
+ * @property {string} created_at - date of creation
+ * @property {string} updated_at - date of last update
+ */
+
+/**
+ * a get User type
+ *
+ * @typedef {object} UserGet
+ * @property {number} id - user id
+ * @property {string} first_name - user's first_name
+ * @property {string} last_name - user's last_name
+ * @property {string} email - user's email adress
+ * @property {string} postal_code - user's postal code (adress)
+ * @property {string} city - user's city (adress)
+ * @property {string} presentation - user's presentation
+ * @property {string} availability - user's availability 'true'/'false'(if role petsitter)
+ * @property {boolean} availability - user's availability (if role petsitter)
+ * @property {array<UserRole>} roles - array of user's roles (id and name)
+ * @property {array<UserPetType>} roles - array of user's pet_types (id and name) if role petsitter
+ * @property {array<UserPet>} pets - array of user's pets (id, name, pet_type name, presentation)
+ * @property {array<UserAd>} ads - array of user's ads (id, city, title, content)
+ * @property {string} created_at - date of creation
+ * @property {string} updated_at - date of last update
+ */
+
+/**
+ * a UserWithPetTypeAndRole type
+ *
+ * @typedef {object} UserWithPetTypeAndRole
+ * @property {number} id - user id
+ * @property {string} first_name - user's first_name
+ * @property {string} last_name - user's last_name
+ * @property {string} email - user's email adress
+ * @property {string} postal_code - user's postal code (adress)
+ * @property {string} city - user's city (adress)
+ * @property {string} presentation - user's presentation
+ * @property {string} availability - user's availability 'true'/'false'(if role petsitter)
+ * @property {boolean} availability - user's availability (if role petsitter)
+ * @property {array<string>} role_names - array of user's role names
+ * @property {array<number>} pet_types_ids - array of user's pet_types names if role petsitter
+ * @property {string} created_at - date of creation
+ * @property {string} updated_at - date of last update
+ */
+
+/**
+ * a post User type
+ *
+ * @typedef {object} UserPost
+ * @property {string} first_name - user's first_name
+ * @property {string} last_name - user's last_name
+ * @property {string} email - user's email adress
+ * @property {string} password - user's password
+ * @property {string} confirmPassword - user's password confirmation
+ * @property {string} postal_code - user's postal code (adress)
+ * @property {string} city - user's city (adress)
+ * @property {string} role_petowner - 'true' if user's role is petowner / 'false'
+ * @property {string} role_petsitter - 'true' if user's role is petsitter / 'false'
+ * @property {string} availability - user's availability 'true'/'false'(if role petsitter)
+ * @property {string} availability_details - user's availability details (if role petsitter)
+ * @property {array<number>} pet_type - array of user's pet_type id
+ */
+
+/**
+ * a put User type
+ *
+ * @typedef {object} UserPut
+ * @property {string} first_name - user's first_name
+ * @property {string} last_name - user's last_name
+ * @property {string} email - user's email adress
+ * @property {string} presentation - user's presentation
+ * @property {string} postal_code - user's postal code (adress)
+ * @property {string} city - user's city (adress)
+ * @property {string} role_petowner - 'true' if user's role is petowner / 'false'
+ * @property {string} role_petsitter - 'true' if user's role is petsitter / 'false'
+ * @property {string} availability - user's availability 'true'/'false'(if role petsitter)
+ * @property {string} availability_details - user's availability details (if role petsitter)
+ * @property {array<string>} pet_type - array of user's pet_type id
+ */
+
+/**
+ * a User created type
+ *
+ * @typedef {object} UserCreated
+ * @property {number} id - user id
+ * @property {string} first_name - user's first_name
+ * @property {string} last_name - user's last_name
+ * @property {string} email - user's email adress
+ * @property {string} postal_code - user's postal code (adress)
+ * @property {string} city - user's city (adress)
+ * @property {string} presentation - user's presentation
+ * @property {array<number>} roles - array of user's roles id
+ * @property {array<number>} pet_type - array of user's pet_type id
+ * @property {boolean} availability - user's availability (if role petsitter)
+ * @property {string} availability_details - user's availability details (if role petsitter)
+ * @property {string} created_at - date of creation
+ * @property {string} updated_at - date of last update
+ */
+
+/**
+ * an User updated type
+ *
+ * @typedef {object} UserUpdated
+ * @property {number} id - user id
+ * @property {string} first_name - user's first_name
+ * @property {string} last_name - user's last_name
+ * @property {string} email - user's email adress
+ * @property {string} postal_code - user's postal code (adress)
+ * @property {string} city - user's city (adress)
+ * @property {string} presentation - user's presentation
+ * @property {array<number>} roles - array of user's roles id
+ * @property {array<number>} pet_type - array of user's pet_type id
+ * @property {boolean} availability - user's availability (if role petsitter)
+ * @property {string} availability_details - user's availability details (if role petsitter)
+ * @property {string} created_at - date of creation
+ * @property {string} updated_at - date of last update
+ * @property {array<number>} roles - array of user's roles id
+ * @property {array<number>} pet_type - array of user's pet_type id
+ * @property {array<UserPet>} pets - array of user's pets (id, name, pet_type name, presentation)
+ * @property {array<UserAd>} ads - array of user's ads (id, city, title, content)
+ */
+
 const userDataMapper = {
-  /**
-   * Fetch all users from database
-   * @returns {array} array of users
-   */
-  findAllUsers: async () => {
-    debug('findAllUsers');
-    const query = {
-      text: 'SELECT * FROM "user" ORDER BY "id"',
-    };
-    const results = await client.query(query);
-    return results.rows;
-  },
+
+  // /**
+  //  * Fetches all users from database
+  //  *
+  //  * @returns {array<User>} - array of users
+  //  */
+  // findAllUsers: async () => {
+  //   debug('findAllUsers');
+  //   const query = {
+  //     text: 'SELECT * FROM "user" ORDER BY "id"',
+  //   };
+  //   const results = await client.query(query);
+  //   return results.rows;
+  // },
 
   /**
-   * Fetch available petsitters from database
-   * @returns {array} array of users
+   * Fetches available petsitters from database
+   *
+   * @returns {array<UserResearched>} array of users as available petsitters + their pet_types
    */
   findAllAvailablePetsitters: async () => {
     debug('findAllAvailablePetsitters');
@@ -43,8 +181,9 @@ const userDataMapper = {
   },
 
   /**
-   * Fetch available petsitters from database : filter by department and pet type
-   * @returns {array} array of users
+   * Fetches available petsitters from database filtered by department & pet_type
+   *
+   * @returns {array<UserResearched>} array of users as available petsitters + their pet_types
    */
   findAllAvailablePetsittersFilter: async (department, petType) => {
     debug('findAllAvailablePetsittersFilter');
@@ -93,26 +232,34 @@ const userDataMapper = {
   //   return results.rows; // retourne un tableau contenant des objets (chaque pet = un objet)
   // },
 
-  findAdsByUserId: async (id) => {
-    debug('findAdsByUserId');
-    debug('id', id);
-    const query = {
-      text: `
-        SELECT
-          "ad"."id",
-          "ad"."title",
-          "ad"."content",
-          "ad"."city",
-          "ad"."postal_code"
-        FROM "ad"        
-        WHERE "ad"."user_id" = $1
-      `,
-      values: [id],
-    };
-    const results = await client.query(query);
-    return results.rows; // retourne un tableau contenant des objets (chaque ad = un objet)
-  },
+  // -------FONCTION CI-DESSOUS INUTILE CAR EXISTE DANS adDataMapper ?---------
+  // findAdsByUserId: async (id) => {
+  //   debug('findAdsByUserId');
+  //   debug('id', id);
+  //   const query = {
+  //     text: `
+  //       SELECT
+  //         "ad"."id",
+  //         "ad"."title",
+  //         "ad"."content",
+  //         "ad"."city",
+  //         "ad"."postal_code"
+  //       FROM "ad"
+  //       WHERE "ad"."user_id" = $1
+  //     `,
+  //     values: [id],
+  //   };
+  //   const results = await client.query(query);
+  //   return results.rows; // retourne un tableau contenant des objets (chaque ad = un objet)
+  // },
 
+  /**
+   * fetches a user entry according to its email
+   *
+   * @param {number} email - user's email
+   *
+   * @returns {User} a user
+   */
   findUserByEmail: async (email) => {
     debug('findUserByEmail');
     debug('email', email);
@@ -127,6 +274,13 @@ const userDataMapper = {
     return results.rows[0];
   },
 
+  /**
+   * fetches a user entry according to its id
+   *
+   * @param {number} id - user's id
+   *
+   * @returns {UserGet} a user with its roles, pet_types (if petsitter), pets, ads
+   */
   findUserById: async (id) => {
     debug('findUserById');
     debug('id', id);
@@ -158,11 +312,18 @@ const userDataMapper = {
       values: [id],
     };
     const results = await client.query(query);
-    debug(results.rows[0]);
+    debug('User by id : ', results.rows[0]);
 
     return results.rows[0];
   },
 
+  /**
+   * fetches a user with pet_types_id and role_names according to its id
+   *
+   * @param {number} id - user's id
+   *
+   * @returns {UserWithPetTypeAndRole} a user with its role_names, pet_types_ids (if petsitter)
+  */
   findUserWithRoleAndPetTypeById: async (id) => {
     debug('findUserWithRoleAndPetTypeById');
     debug('id', id);
@@ -176,7 +337,7 @@ const userDataMapper = {
         LEFT JOIN "user_has_role" ON "user"."id"="user_has_role"."user_id"
         LEFT JOIN "role" ON "user_has_role"."role_id"="role"."id"
         LEFT JOIN "user_has_pet_type" ON "user"."id"="user_has_pet_type"."user_id"
-        WHERE 
+        WHERE
           "user"."id" = $1
         GROUP BY "user"."id";
       `,
@@ -187,7 +348,12 @@ const userDataMapper = {
     return results.rows[0];
   },
 
-  // Add one user with their roles
+  /**
+   * adds (creates) a user
+   *
+   * @param {UserPost} createObj - the user to create
+   * @returns {UserCreated} the created user
+   */
   createUser: async (createObj) => {
     debug('createObj', createObj);
     debug('createUser');
@@ -278,7 +444,15 @@ const userDataMapper = {
     return results.rows[0];
   },
 
-  // Modify one user
+  /**
+   * modifies a user according to it's id
+   *
+   * @param {number} id - the user's id
+   * @param {UserPost} modifyObj - the user to modify
+   * @param {UserGet} userBeforeSave - the user before modifications
+   *
+   * @returns {UserUpdated} the modified user
+   */
   modifyUser: async (id, modifyObj, userBeforeSave) => {
     debug('modifyUser');
     debug('id', id);
@@ -335,7 +509,7 @@ const userDataMapper = {
 
       // if it does AND role_petsitter=false in body : we delete the role
       if (role_petsitter === 'false') {
-        // debug('role_petsitter === "false"');
+        debug('role_petsitter === "false"');
         const queryUserRole = {
           text: `
             DELETE FROM "user_has_role"
@@ -348,8 +522,8 @@ const userDataMapper = {
         promises.push(client.query(queryUserRole));
       }
     } else {
-      // 1bis) Sinon (role petsitter est absent de role_names)
-      // et si role_petsitter est true
+      debug('previousRole.name === "petsitter"');
+      // 1bis) if 'petsitter' is not in previous role AND it is updated to 'true':
       const queryUserRole = {
         text: `
           INSERT INTO "user_has_role"("user_id", "role_id")
@@ -364,11 +538,11 @@ const userDataMapper = {
 
     // 2) Tester si le role petowner existe déjà
     if (userBeforeSave.role_names.includes('petowner')) {
-      // debug('userBeforeChangeRole.includes("petowner")');
+      debug('previousRole.name === "petowner"');
 
       // Si oui, et que le nouveau role est false, on le supprime
       if (role_petowner === 'false') {
-        // debug('role_petowner === "false"');
+        debug('role_petowner === "false"');
         const queryUserRole = {
           text: `
             DELETE FROM "user_has_role"
@@ -407,12 +581,16 @@ const userDataMapper = {
     if (pet_type) { // Si pet_type est vide, on ne fait rien
       petTypesToNb = pet_type.map(Number);
     }
-    debug('tableau 1 :', userBeforeSave.pet_types_ids);
-    debug('tableau 2: ', petTypesToNb);
 
-    // 1) pour les pet_types cochés à la modif, on ajoute les lignes à ce user dans user_has_pet_type
-    const addedPetTypes = petTypesToNb.filter((type) => !userBeforeSave.pet_types_ids.includes(type));
-    // console.log(valeursNouvelles); >> insert
+    debug('Previous pet_types : ', userBeforeSave.pet_types_ids);
+    debug('Updated pet_types : ', petTypesToNb);
+
+    // 1) pour les pet_types cochés à la modif,
+    // on ajoute les lignes à ce user dans user_has_pet_type
+    const addedPetTypes = petTypesToNb.filter(
+      (type) => !userBeforeSave.pet_types_ids.includes(type),
+    );
+
     debug('valeurs ajoutées :', addedPetTypes);
     // we add the pet-types for this user in the table "user_has_pet_type":
 
@@ -423,11 +601,13 @@ const userDataMapper = {
       values: [id, addedPetTypes],
     };
 
-    const resultsAddedPetType = await client.query(queryUserAddedPetTypes);
-    debug('resultsAddedPetType :', resultsAddedPetType.rows);
+    await client.query(queryUserAddedPetTypes);
 
-    // 2) pour les pet_types décochés à la modif on delete les lignes à ce user dans user_has_pet_type
-    const removedPetTypes = userBeforeSave.pet_types_ids.filter((type) => !petTypesToNb.includes(type));
+    // 2) pour les pet_types décochés à la modif
+    // on delete les lignes à ce user dans user_has_pet_type
+    const removedPetTypes = userBeforeSave.pet_types_ids.filter(
+      (type) => !petTypesToNb.includes(type),
+    );
     debug('valeurs supprimées :', removedPetTypes);
 
     const queryUserRemovedPetTypes = {
@@ -437,8 +617,7 @@ const userDataMapper = {
       values: [id, removedPetTypes],
     };
 
-    const resultsRemovedPetType = await client.query(queryUserRemovedPetTypes);
-    debug('resultsRemovedPetType :', resultsRemovedPetType.rows);
+    await client.query(queryUserRemovedPetTypes);
 
     const userAfterSave = await userDataMapper.findUserById(id);
     // debug('userAfterSave', userAfterSave);
@@ -446,6 +625,11 @@ const userDataMapper = {
     return userAfterSave;
   },
 
+  /**
+   * deletes a user according to it's id
+   *
+   * @param {number} id - the user's id
+   */
   deleteUserById: async (id) => {
     debug(`deleteUserById(${id})`);
     const query = {

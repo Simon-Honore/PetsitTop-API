@@ -25,7 +25,7 @@ const { put: petPutSchema } = require('../validations/schemas/pet.schema');
 /**
  * a pet type for creation/modification
  *
- * @typedef {object} createOrUpdatePet
+ * @typedef {object} PetCreateModify
  * @property {string} name - pet name
  * @property {string} presentation - pet presentation
  * @property {number} pet_type_id - pet pet_type_id
@@ -38,7 +38,7 @@ const { put: petPutSchema } = require('../validations/schemas/pet.schema');
  * @tags Pets
  *
  * @param {number} userId.path - user id
- * @param {createOrUpdatePet} request.body - pet
+ * @param {PetCreateModify} request.body - pet
  *
  * @return {Pet} 200 - success response
  * @return {object} 500 - internal server error
@@ -54,7 +54,7 @@ petRouter.post('/user/:id([0-9]+)/pets', authenticateToken, validate(petPostSche
  * @tags Pets
  *
  * @param {number} petId.path - pet id
- * @param {createOrUpdatePet} request.body - pet
+ * @param {PetCreateModify} request.body - pet
  *
  * @return {Pet} 200 - success response
  * @return {object} 500 - internal server error

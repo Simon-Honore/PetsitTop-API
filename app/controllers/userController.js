@@ -6,11 +6,24 @@ const userDataMapper = require('../models/userDataMapper');
 
 const userController = {
 
-  async getAllUsers(request, response) {
-    debug('getAllUsers');
-    const users = await userDataMapper.findAllUsers();
-    response.status(200).json(users);
-  },
+  // /**
+  //  * responds with all entries from "user" relation
+  //  *
+  //  * @param {Object} _
+  //  * @param {Object} response
+  //  */
+  // async getAllUsers(_, response) {
+  //   debug('getAllUsers');
+  //   const users = await userDataMapper.findAllUsers();
+  //   response.status(200).json(users);
+  // },
+
+  /**
+   * responds with all users who are available petsitters (filtered by department & pet_type)
+   *
+   * @param {Object} request
+   * @param {Object} response
+   */
   async getSearchResults(request, response) {
     debug('getSearchResults');
     const { department, pet_type: petType } = request.query;
@@ -18,40 +31,64 @@ const userController = {
     response.status(200).json(users);
   },
 
-  async getOneUser(request, response) {
+  /**
+   * responds with one entry from relation "user"
+   *
+   * @param {Object} request
+   * @param {Object} response
+   * @param {function} next - go to next mw function
+   */
+  async getOneUser(request, response, next) {
     debug('getOneUser');
     const searchedId = Number(request.params.id);
 
-    let user = await userDataMapper.findUserById(searchedId);
+    const searchedUser = await userDataMapper.findUserById(searchedId);
 
     // On enlève le password de l'objet user
-    const { password, ...userWithoutPwd } = user;
+    // eslint-disable-next-line prefer-const
+    let { password, ...userWithoutPwd } = searchedUser;
 
-    // Si l'user est connecté, on ajoute une propriété isOwner à l'objet user
+    // if user does not exist : 404
+    if (!searchedUser) {
+      debug(`User ${searchedId} does not exists`);
+      const error = { statusCode: 404, message: 'User does not exists' };
+      return next(error);
+    }
+
+    // if the logged in user is the same as the searchedUser ,
+    // we add a property to the searchedUser => isOwner: true
+    // to grant access to the "Mon Profil" page
     const loggedInUser = request.user;
     debug('loggedInUser :', loggedInUser);
     if (Number(searchedId) === loggedInUser.id) {
-      user = { userWithoutPwd, isOwner: true };
+      userWithoutPwd = { ...userWithoutPwd, isOwner: true };
     }
-    response.status(200).json(userWithoutPwd);
+    return response.status(200).json(userWithoutPwd);
   },
 
+  /**
+   * creates one entry in "user" table
+   *
+   * @param {Object} request
+   * @param {Object} response
+   * @param {function} next - go to next mw function
+   */
   async createUser(request, response, next) {
     debug('createUser');
     const { body } = request;
 
-    // Test si email existe déjà
+    // Test if email already exists in DB
     const isExistingUser = await userDataMapper.findUserByEmail(body.email);
     if (isExistingUser) {
       const error = { statusCode: 400, message: 'Email is already exists' };
       return next(error);
     }
 
-    // Hash le password de l'user avec Bcrypt
+    // Hash user's password with Bcrypt
     // doc: https://www.npmjs.com/package/bcrypt
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(body.password, saltRounds);
-    // on remplace le password en clair par le 'hashé' pour le stockage en DB:
+    // on replace the typed password with the hashed one to store in DB:
     body.password = hashedPassword;
 
     // Security: we remove the confirmPassword (not hashed) from request.body to prevent data leaks:
@@ -62,15 +99,23 @@ const userController = {
     // On enlève le password de l'objet user
     const { password, ...userWithoutPwd } = user;
 
-    // debug(user);
+    debug('Created user : ', userWithoutPwd);
+
     return response.status(201).json(userWithoutPwd);
   },
 
+  /**
+   * updates an entry in "user" table
+   *
+   * @param {Object} request
+   * @param {Object} response
+   * @param {function} next - go to next mw function
+   */
   async modifyUser(request, response, next) {
     debug('modifyUser');
     const { id } = request.params;
 
-    // Test si l'user a le droit d'accéder à cette route
+    // Test if user is allowed to modify (can only modify its own profile)
     const loggedInUser = request.user;
     debug('loggedInUser :', loggedInUser);
     if (Number(id) !== loggedInUser.id) {
@@ -78,17 +123,16 @@ const userController = {
       return next(error);
     }
 
-    // Etat actuel de l'user (avant modification)
+    // user details before modification :
     const userBeforeSave = await userDataMapper.findUserWithRoleAndPetTypeById(id);
     debug('userbeforeSave :', userBeforeSave);
-    // Si la modification de l'user n'a aucun role, on renvoie une erreur
+    // if the modified user doesn't contain at least one role (required) => error
     const { role_petsitter, role_petowner } = request.body;
-    if
-    (
-      (role_petsitter === 'false' && role_petowner === 'false')
+
+    if ((role_petsitter === 'false' && role_petowner === 'false')
       && (userBeforeSave.role_names.includes('petowner') || userBeforeSave.role_names.includes('petsitter'))
     ) {
-      const error = { statusCode: 400, message: 'Au moins un rôle est requis' };
+      const error = { statusCode: 400, message: 'At least one role is required' };
       return next(error);
     }
 
@@ -104,15 +148,24 @@ const userController = {
       }
     }
 
-    // On modifie l'user avec les nouvelles données
+    // if all OK, we update the user:
     const user = await userDataMapper.modifyUser(id, request.body, userBeforeSave);
 
     // On enlève le password de l'objet user
     const { password, ...userWithoutPwd } = user;
 
+    debug('Updated user : ', userWithoutPwd);
+
     return response.status(200).json(userWithoutPwd);
   },
 
+  /**
+   * deletes an entry from "user" table
+   *
+   * @param {Object} request
+   * @param {Object} response
+   * @param {function} next - go to next mw function
+   */
   async deleteUser(request, response, next) {
     debug('deleteUserById');
     const { id } = request.params; // id of the user to delete
