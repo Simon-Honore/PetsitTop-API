@@ -480,8 +480,8 @@ const userDataMapper = {
       // debug('userBeforeChangeRole.includes("petsitter")');
 
       // if it does AND role_petsitter=false in body : we delete the role
-      if (role_petsitter === 'false') {
-        debug('role_petsitter === "false"');
+      if (role_petsitter === false) {
+        debug('role_petsitter === false');
         const queryUserRole = {
           text: `
             DELETE FROM "user_has_role"
@@ -494,7 +494,7 @@ const userDataMapper = {
         promises.push(client.query(queryUserRole));
       }
     } else {
-      debug('previousRole.name === "petsitter"');
+      debug('previousRole.name === petsitter');
       // 1bis) if 'petsitter' is not in previous role AND it is updated to 'true':
       const queryUserRole = {
         text: `
@@ -513,8 +513,8 @@ const userDataMapper = {
       debug('previousRole.name === "petowner"');
 
       // Si oui, et que le nouveau role est false, on le supprime
-      if (role_petowner === 'false') {
-        debug('role_petowner === "false"');
+      if (role_petowner === false) {
+        debug('role_petowner === false');
         const queryUserRole = {
           text: `
             DELETE FROM "user_has_role"
