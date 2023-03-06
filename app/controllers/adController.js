@@ -16,7 +16,7 @@ const adController = {
     // const { limit, start } = request.query;
 
     // Pagination par défaut (si aucune valeur n'est passée en paramètre)
-    let limit = 10;
+    let limit = 100;
     let start = 0;
     // Valeurs de la pagination envoyées par le client
     if (request.query.limit && request.query.start) {
