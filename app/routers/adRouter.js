@@ -49,7 +49,7 @@ const authenticateToken = require('../middlewares/authenticateToken');
  * @property {number} id - user id
  * @property {string} first_name - user first_name
  * @property {string} last_name - user last_name
- * /
+ */
 
 /**
  * GET /user/{id}/ads
