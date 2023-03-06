@@ -72,8 +72,8 @@ const client = require('./database');
  * @property {string} confirmPassword - user's password confirmation
  * @property {string} postal_code - user's postal code (adress)
  * @property {string} city - user's city (adress)
- * @property {string} role_petowner - 'true' if user's role is petowner / 'false'
- * @property {string} role_petsitter - 'true' if user's role is petsitter / 'false'
+ * @property {boolean} role_petowner - 'true' if user's role is petowner / 'false'
+ * @property {boolean} role_petsitter - 'true' if user's role is petsitter / 'false'
  * @property {string} availability - user's availability 'true'/'false'(if role petsitter)
  * @property {string} availability_details - user's availability details (if role petsitter)
  * @property {array<number>} pet_type - array of user's pet_type id
@@ -89,8 +89,8 @@ const client = require('./database');
  * @property {string} presentation - user's presentation
  * @property {string} postal_code - user's postal code (adress)
  * @property {string} city - user's city (adress)
- * @property {string} role_petowner - 'true' if user's role is petowner / 'false'
- * @property {string} role_petsitter - 'true' if user's role is petsitter / 'false'
+ * @property {boolean} role_petowner - 'true' if user's role is petowner / 'false'
+ * @property {boolean} role_petsitter - 'true' if user's role is petsitter / 'false'
  * @property {string} availability - user's availability 'true'/'false'(if role petsitter)
  * @property {string} availability_details - user's availability details (if role petsitter)
  * @property {array<string>} pet_type - array of user's pet_type id
@@ -370,13 +370,21 @@ const userDataMapper = {
       `,
       values: [userRoleObj],
     };
+    // debug('userRoleObj', userRoleObj);
 
     const resultsRow = results.rows[0];
     // we add a "roles" property to the user we'll return (array of the role or roles)
     resultsRow.roles = [];
 
+    // we check if the two roles are false, if so we add the default role (petowner)
+    if (role_petsitter === false && role_petowner === false) {
+      userRoleObj.role_id = 2; // Petowner by default
+      const resultPetsitter = await client.query(queryUserRole);
+      resultsRow.roles.push(resultPetsitter.rows[0].role_id);
+    }
+
     // debug('role_petsitter', role_petsitter);
-    if (role_petsitter === 'true') {
+    if (role_petsitter === true) {
       userRoleObj.role_id = 1;
       const resultPetsitter = await client.query(queryUserRole);
       // debug('resultPetsitter :', resultPetsitter.rows[0]);
@@ -385,7 +393,7 @@ const userDataMapper = {
       resultsRow.roles.push(resultPetsitter.rows[0].role_id);
     }
     // debug('role_petowner', role_petowner);
-    if (role_petowner === 'true') {
+    if (role_petowner === true) {
       userRoleObj.role_id = 2;
       const resultPetowner = await client.query(queryUserRole);
       // debug('resultPetowner :', resultPetowner.rows[0]);
@@ -393,6 +401,8 @@ const userDataMapper = {
       // we push the role_id in the array of the "roles" property
       resultsRow.roles.push(resultPetowner.rows[0].role_id);
     }
+
+    // debug('resultsRow.roles :', resultsRow.roles);
 
     // we add the pet-types for this user in the table "user_has_pet_type":
     // pet_types is an array of string, so first we cast to numbers:
