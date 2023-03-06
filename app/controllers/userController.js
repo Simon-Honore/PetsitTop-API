@@ -73,6 +73,12 @@ const userController = {
     debug('createUser');
     const { body } = request;
 
+    // Test RGPD & CGU : have to be both TRUE to create an account (active consent)
+    if (body.rgpd_consent !== true || body.cgu_consent !== true) {
+      const error = { statusCode: 400, message: 'To create an account, you must accept RGPD & CGU' };
+      return next(error);
+    }
+
     // Test if email already exists in DB
     const isExistingUser = await userDataMapper.findUserByEmail(body.email);
     if (isExistingUser) {

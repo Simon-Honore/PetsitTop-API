@@ -5,7 +5,7 @@ BEGIN;
 
 -- Function to create a new user
 CREATE OR REPLACE FUNCTION new_user(user_data json) RETURNS "user" AS $$
-  INSERT INTO "user" ("first_name", "last_name", "email", "password", "postal_code", "city", "availability", "availability_details")
+  INSERT INTO "user" ("first_name", "last_name", "email", "password", "postal_code", "city", "availability", "availability_details", "rgpd_consent")
   VALUES (
     user_data->>'first_name',
     user_data->>'last_name',
@@ -14,7 +14,8 @@ CREATE OR REPLACE FUNCTION new_user(user_data json) RETURNS "user" AS $$
     (user_data->>'postal_code')::postal_code_fr,
     user_data->>'city',
     (user_data->>'availability')::boolean,
-    user_data->>'availability_details'
+    user_data->>'availability_details',
+    (user_data->>'rgpd_consent')::boolean
   )
   RETURNING *;
 $$ LANGUAGE sql STRICT;

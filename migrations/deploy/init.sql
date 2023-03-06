@@ -27,6 +27,8 @@ CREATE TABLE "user" (
   "presentation" TEXT,
   "availability" BOOLEAN NOT NULL DEFAULT false,
   "availability_details" TEXT,
+  "rgpd_consent" BOOLEAN NOT NULL,
+  "rgpd_consent_date" TIMESTAMPTZ NOT NULL DEFAULT now(),
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT now(),
   "updated_at" TIMESTAMPTZ
 );

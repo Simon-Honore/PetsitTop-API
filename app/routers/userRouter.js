@@ -25,6 +25,8 @@ const authenticateToken = require('../middlewares/authenticateToken');
  * @property {string} presentation - user's presentation
  * @property {boolean} availability - user's availability (if role petsitter)
  * @property {string} availability_details - user's availability details (if role petsitter)
+ * @property {boolean} rgpd_consent - 'true' if user's rgpd_consent is accepted / 'false'
+ * @property {string} rgpd_consent_date - date of rgpd_consent
  * @property {string} created_at - date of creation
  * @property {string} updated_at - date of last update
  */
@@ -81,11 +83,13 @@ const authenticateToken = require('../middlewares/authenticateToken');
  * @property {string} confirmPassword - user's password confirmation
  * @property {string} postal_code - user's postal code (adress)
  * @property {string} city - user's city (adress)
- * @property {string} role_petowner - 'true' if user's role is petowner / 'false'
- * @property {string} role_petsitter - 'true' if user's role is petsitter / 'false'
+ * @property {boolean} role_petowner - 'true' if user's role is petowner / 'false'
+ * @property {boolean} role_petsitter - 'true' if user's role is petsitter / 'false'
  * @property {string} availability - user's availability 'true'/'false'(if role petsitter)
  * @property {string} availability_details - user's availability details (if role petsitter)
  * @property {array<number>} pet_type - array of user's pet_type id
+ * @property {boolean} rgpd_consent - 'true' if user's rgpd_consent is accepted / 'false'
+ * @property {boolean} cgu_consent - 'true' if user's cgu_consent is accepted / 'false'
  */
 
 /**
@@ -98,8 +102,8 @@ const authenticateToken = require('../middlewares/authenticateToken');
  * @property {string} presentation - user's presentation
  * @property {string} postal_code - user's postal code (adress)
  * @property {string} city - user's city (adress)
- * @property {string} role_petowner - 'true' if user's role is petowner / 'false'
- * @property {string} role_petsitter - 'true' if user's role is petsitter / 'false'
+ * @property {boolean} role_petowner - 'true' if user's role is petowner / 'false'
+ * @property {boolean} role_petsitter - 'true' if user's role is petsitter / 'false'
  * @property {string} availability - user's availability 'true'/'false'(if role petsitter)
  * @property {string} availability_details - user's availability details (if role petsitter)
  * @property {array<string>} pet_type - array of user's pet_type id
@@ -120,6 +124,8 @@ const authenticateToken = require('../middlewares/authenticateToken');
  * @property {array<number>} pet_type - array of user's pet_type id
  * @property {boolean} availability - user's availability (if role petsitter)
  * @property {string} availability_details - user's availability details (if role petsitter)
+ * @property {boolean} rgpd_consent - 'true' if user's rgpd_consent is accepted / 'false'
+ * @property {string} rgpd_consent_date - date of rgpd_consent
  * @property {string} created_at - date of creation
  * @property {string} updated_at - date of last update
  */
