@@ -73,7 +73,13 @@ const schemas = {
       .required(),
     pet_type: Joi
       .array()
-      .items(Joi.string())
+      .items(Joi.string()),
+    rgpd_consent: Joi
+      .boolean()
+      .required(),
+    cgu_consent: Joi
+      .boolean()
+      .required(),
   }).required(),
   put: Joi.object({
     first_name: Joi
@@ -119,7 +125,7 @@ const schemas = {
       .required(),
     pet_type: Joi
       .array()
-      .items(Joi.string())
+      .items(Joi.string()),
   }).required(),
 };
 
