@@ -87,7 +87,7 @@ const authenticateToken = require('../middlewares/authenticateToken');
  * @property {boolean} role_petsitter - 'true' if user's role is petsitter / 'false'
  * @property {string} availability - user's availability 'true'/'false'(if role petsitter)
  * @property {string} availability_details - user's availability details (if role petsitter)
- * @property {array<number>} pet_type - array of user's pet_type id
+ * @property {array<string>} pet_type - array of user's pet_type id
  * @property {boolean} rgpd_consent - 'true' if user's rgpd_consent is accepted / 'false'
  * @property {boolean} cgu_consent - 'true' if user's cgu_consent is accepted / 'false'
  */
