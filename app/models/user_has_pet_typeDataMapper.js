@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 const debug = require('debug')('opet:user_has_pet_typeDataMapper');
+const { getSearchResults } = require('../controllers/userController');
 const client = require('./database');
 
 const user_has_pet_typeDataMapper = {
@@ -21,7 +22,8 @@ const user_has_pet_typeDataMapper = {
       values: [userId, addedPetTypes],
     };
 
-    await client.query(queryUserAddedPetTypes);
+    const results = await client.query(queryUserAddedPetTypes);
+    return results;
   },
 
   /**
@@ -41,7 +43,8 @@ const user_has_pet_typeDataMapper = {
       values: [userId, removedPetTypes],
     };
 
-    await client.query(queryUserRemovedPetTypes);
+    const results = await client.query(queryUserRemovedPetTypes);
+    return results;
   },
 
 };

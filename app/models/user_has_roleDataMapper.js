@@ -49,8 +49,8 @@ const user_has_roleDataMapper = {
       `,
       values: [userId, roleId],
     };
-
-    await client.query(queryUserRole);
+    const results = await client.query(queryUserRole);
+    return results;
   },
 };
 
