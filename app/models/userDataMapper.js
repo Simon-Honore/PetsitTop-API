@@ -1,6 +1,8 @@
 /* eslint-disable camelcase */
 const debug = require('debug')('opet:userDataMapper');
 const client = require('./database');
+const user_has_roleDataMapper = require('./user_has_roleDataMapper');
+const user_has_pet_typeDataMapper = require('./user_has_pet_typeDataMapper');
 
 /**
  * a general User type
@@ -361,38 +363,30 @@ const userDataMapper = {
     // debug('query', query);
     const results = await client.query(queryUser);
 
-    // Insert roles into table "user_has_role" :
+    // ----- WE AD THE ROLES FOR THE USER IN TABLE "user_has_role" :
     // 1 insert if role petsitter and/or 1 insert if role petowner
 
     // we get the id of the user we just inserted in table "user" :
     const { id: userId } = results.rows[0];
 
+    // we add a "roles" property to the user we'll return (array of the role or roles)
+    const resultsRow = results.rows[0];
+    resultsRow.roles = [];
+
     // default role is petowner
     const userRoleObj = { user_id: userId, role_id: 2 };
-
-    const queryUserRole = {
-      text: `
-        SELECT * FROM new_user_has_role($1);
-      `,
-      values: [userRoleObj],
-    };
-    // debug('userRoleObj', userRoleObj);
-
-    const resultsRow = results.rows[0];
-    // we add a "roles" property to the user we'll return (array of the role or roles)
-    resultsRow.roles = [];
 
     // we check if the two roles are false, if so we add the default role (petowner)
     if (role_petsitter === false && role_petowner === false) {
       userRoleObj.role_id = 2; // Petowner by default
-      const resultPetsitter = await client.query(queryUserRole);
+      const resultPetsitter = await user_has_roleDataMapper.createUserHasRolesForUser(userRoleObj);
       resultsRow.roles.push(resultPetsitter.rows[0].role_id);
     }
 
     // debug('role_petsitter', role_petsitter);
     if (role_petsitter === true) {
       userRoleObj.role_id = 1;
-      const resultPetsitter = await client.query(queryUserRole);
+      const resultPetsitter = await user_has_roleDataMapper.createUserHasRolesForUser(userRoleObj);
       // debug('resultPetsitter :', resultPetsitter.rows[0]);
 
       // we push the role_id in the array of the "roles" property
@@ -401,7 +395,7 @@ const userDataMapper = {
     // debug('role_petowner', role_petowner);
     if (role_petowner === true) {
       userRoleObj.role_id = 2;
-      const resultPetowner = await client.query(queryUserRole);
+      const resultPetowner = await user_has_roleDataMapper.createUserHasRolesForUser(userRoleObj);
       // debug('resultPetowner :', resultPetowner.rows[0]);
 
       // we push the role_id in the array of the "roles" property
@@ -410,22 +404,16 @@ const userDataMapper = {
 
     // debug('resultsRow.roles :', resultsRow.roles);
 
-    // we add the pet-types for this user in the table "user_has_pet_type":
-    // pet_types is an array of string, so first we cast to numbers:
+    // -----WE ADD THE PET_TYPES FOR THIS USER IN TABLE "user_has_pet_type":
+    // pet_types is an array of string, so first we cast to array of numbers:
     let petTypesToNumbers = [];
     if (pet_type) { // Si pet_type est vide, on ne fait rien
       petTypesToNumbers = pet_type.map(Number);
     }
 
-    const queryUserPetTypes = {
-      text: `
-        SELECT * FROM new_user_has_pet_type($1, $2);
-      `,
-      values: [userId, petTypesToNumbers],
-    };
-
-    const resultsPetType = await client.query(queryUserPetTypes);
-    debug('resultsPetType :', resultsPetType.rows);
+    // eslint-disable-next-line max-len
+    const resultsPetType = await user_has_pet_typeDataMapper.createUserHasPetTypesForUser(userId, petTypesToNumbers);
+    // debug('resultsPetType :', resultsPetType.rows);
 
     const allPetTypes = resultsPetType.rows;
 
@@ -472,131 +460,64 @@ const userDataMapper = {
     const results = await client.query(queryUser);
     debug('userAfterSave', results.rows[0]);
 
-    // Modify role in table "user_has_role"
+    // -----MODIFICATION OF ROLES IN "user_has_role":
+    // // array of promises of the following async queries in conditions :
+    // const promises = [];
 
-    // ---------IDEALEMENT : REFACTO DE CE QUI SUIT DANS UNE AUTRE FONCTION
-    // ---------PAR EXEMPLE "modifyUserHasRole"
-    //---------
-
-    // array of promises of the following async queries :
-    const promises = [];
+    const userRoleObj = { user_id: id, role_id: 2 };
 
     // 1) Check if role_petsitter already exists for this user
     if (userBeforeSave.role_names.includes('petsitter')) {
-      // debug('userBeforeChangeRole.includes("petsitter")');
-
-      // if it does AND role_petsitter=false in body : we delete the role
+      userRoleObj.role_id = 1;
+      // if it does AND role_petsitter=false in body : we delete the role from user_has_role
       if (role_petsitter === false) {
-        debug('role_petsitter === false');
-        const queryUserRole = {
-          text: `
-            DELETE FROM "user_has_role"
-            WHERE "user_id" = $1
-            AND "role_id" = 1
-          `,
-          values: [id],
-        };
-
-        promises.push(client.query(queryUserRole));
+        await user_has_roleDataMapper.deleteUserHasRolesForUser(id, userRoleObj.role_id);
       }
-    } else {
-      debug('previousRole.name === petsitter');
-      // 1bis) if 'petsitter' is not in previous role AND it is updated to 'true':
-      const queryUserRole = {
-        text: `
-          INSERT INTO "user_has_role"("user_id", "role_id")
-          VALUES ($1, 1)
-          RETURNING *;
-        `,
-        values: [id],
-      };
-
-      promises.push(client.query(queryUserRole));
+      // 1bis) else: 'petsitter' is not in previous role AND it is updated to 'true':
+      // we create role in user_has_role
+    } else if (role_petsitter === true) {
+      await user_has_roleDataMapper.createUserHasRolesForUser(userRoleObj);
     }
 
-    // 2) Tester si le role petowner existe déjà
+    // 2) Check if role_petowner already exists for this user
     if (userBeforeSave.role_names.includes('petowner')) {
-      debug('previousRole.name === "petowner"');
-
-      // Si oui, et que le nouveau role est false, on le supprime
+      userRoleObj.role_id = 2;
+      // if it does AND role_petowner=false in body : we delete the role from user_has_role
       if (role_petowner === false) {
-        debug('role_petowner === false');
-        const queryUserRole = {
-          text: `
-            DELETE FROM "user_has_role"
-            WHERE "user_id" = $1
-            AND "role_id" = 2
-          `,
-          values: [id],
-        };
-
-        promises.push(client.query(queryUserRole));
+        await user_has_roleDataMapper.deleteUserHasRolesForUser(id, userRoleObj.role_id);
       }
-    } else {
-      // 2bis) Sinon (role petowner est absent de role_names)
-      // et si role_petowner est true
-      const queryUserRole = {
-        text: `
-          INSERT INTO "user_has_role"("user_id", "role_id")
-          VALUES ($1, 2)
-          RETURNING *;
-        `,
-        values: [id],
-      };
-
-      promises.push(client.query(queryUserRole));
+    // 2bis) if 'petowner' is not in previous role AND it is updated to 'true':
+    // we create role in user_has_role
+    } else if (role_petowner === true) {
+      await user_has_roleDataMapper.createUserHasRolesForUser(userRoleObj);
     }
 
-    await Promise.all(promises);
-
-    // ---------
-    // ---------
-    // ---------
-
-    // we update pet_types in user_has_pet_type (2 cases):
-    // pet_types is an array of string, so first we cast to numbers:
+    // -----MODIFICATION OF ROLES IN user_has_pet_type (2 cases):
+    // if pet_type is not empty, we cast array of strings to array of numbers
     let petTypesToNb = [];
-    if (pet_type) { // Si pet_type est vide, on ne fait rien
+    if (pet_type) {
       petTypesToNb = pet_type.map(Number);
     }
 
-    debug('Previous pet_types : ', userBeforeSave.pet_types_ids);
-    debug('Updated pet_types : ', petTypesToNb);
-
-    // 1) pour les pet_types cochés à la modif,
-    // on ajoute les lignes à ce user dans user_has_pet_type
+    // 1) for the new "checked" pet_types in modification form,
+    // we add them to table "user_has_pet_type" for the user
     const addedPetTypes = petTypesToNb.filter(
       (type) => !userBeforeSave.pet_types_ids.includes(type),
     );
+    debug('Added pet_types :', addedPetTypes);
+    // we add the pet-types in the table "user_has_pet_type":
+    await user_has_pet_typeDataMapper.createUserHasPetTypesForUser(id, addedPetTypes);
 
-    debug('valeurs ajoutées :', addedPetTypes);
-    // we add the pet-types for this user in the table "user_has_pet_type":
-
-    const queryUserAddedPetTypes = {
-      text: `
-        SELECT * FROM new_user_has_pet_type($1, $2);
-      `,
-      values: [id, addedPetTypes],
-    };
-
-    await client.query(queryUserAddedPetTypes);
-
-    // 2) pour les pet_types décochés à la modif
-    // on delete les lignes à ce user dans user_has_pet_type
+    // 2) for the "un-checked" pet_types in modification form
+    /// we delete them from table "user_has_pet_type" for the user
     const removedPetTypes = userBeforeSave.pet_types_ids.filter(
       (type) => !petTypesToNb.includes(type),
     );
-    debug('valeurs supprimées :', removedPetTypes);
+    debug('Removed pet_types :', removedPetTypes);
+    // we delete the pet-types from the table "user_has_pet_type":
+    await user_has_pet_typeDataMapper.deleteUserHasPetTypesForUser(id, removedPetTypes);
 
-    const queryUserRemovedPetTypes = {
-      text: `
-        SELECT * FROM delete_user_has_pet_type($1, $2);
-      `,
-      values: [id, removedPetTypes],
-    };
-
-    await client.query(queryUserRemovedPetTypes);
-
+    // get the updated user from DB:
     const userAfterSave = await userDataMapper.findUserById(id);
     // debug('userAfterSave', userAfterSave);
 
