@@ -77,4 +77,10 @@ $$ LANGUAGE sql STRICT;
     END;
   $$ LANGUAGE plpgsql STRICT;
 
+  CREATE OR REPLACE FUNCTION delete_user_has_role(user_has_role_data json) RETURNS VOID AS $$
+    DELETE FROM "user_has_role"
+      WHERE "user_id" = (user_has_role_data->>'user_id')::int
+      AND "role_id" = (user_has_role_data->>'role_id')::int
+  $$ LANGUAGE sql STRICT;
+
 COMMIT;
