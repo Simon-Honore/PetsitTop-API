@@ -461,40 +461,47 @@ const userDataMapper = {
     debug('userAfterSave', results.rows[0]);
 
     // -----MODIFICATION OF ROLES IN "user_has_role":
-    // // array of promises of the following async queries in conditions :
-    // const promises = [];
-
-    const userRoleObj = { user_id: id, role_id: 2 };
+    const userRoleObj = { user_id: id };
 
     // 1) Check if role_petsitter already exists for this user
     if (userBeforeSave.role_names.includes('petsitter')) {
+      // debug('userBeforeSave was a petsitter');
       userRoleObj.role_id = 1;
       // if it does AND role_petsitter=false in body : we delete the role from user_has_role
       if (role_petsitter === false) {
+        // debug('role_petsitter === false');
         // eslint-disable-next-line max-len
         await user_has_roleDataMapper.deleteUserHasRolesForUser(userRoleObj);
       }
       // 1bis) else: 'petsitter' is not in previous role AND it is updated to 'true':
       // we create role in user_has_role
     } else {
+      // debug('userBeforeSave was NOT a petsitter');
+      userRoleObj.role_id = 1;
       // eslint-disable-next-line no-lonely-if
       if (role_petsitter === true) {
+        // debug('role_petsitter === true');
         await user_has_roleDataMapper.createUserHasRolesForUser(userRoleObj);
       }
     }
 
     // 2) Check if role_petowner already exists for this user
     if (userBeforeSave.role_names.includes('petowner')) {
+      // debug('userBeforeSave was a petowner');
       userRoleObj.role_id = 2;
       // if it does AND role_petowner=false in body : we delete the role from user_has_role
       if (role_petowner === false) {
+        // debug('role_petowner === false');
         await user_has_roleDataMapper.deleteUserHasRolesForUser(userRoleObj);
       }
-    // 2bis) if 'petowner' is not in previous role AND it is updated to 'true':
-    // we create role in user_has_role
+      // 2bis) if 'petowner' is not in previous role AND it is updated to 'true':
+      // we create role in user_has_role
     } else {
+      // debug('userBeforeSave was NOT a petowner');
       // eslint-disable-next-line no-lonely-if
       if (role_petowner === true) {
+        // debug('role_petowner === true');
+        userRoleObj.role_id = 2;
         await user_has_roleDataMapper.createUserHasRolesForUser(userRoleObj);
       }
     }

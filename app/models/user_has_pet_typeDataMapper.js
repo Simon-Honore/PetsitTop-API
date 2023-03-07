@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 const debug = require('debug')('opet:user_has_pet_typeDataMapper');
-const { getSearchResults } = require('../controllers/userController');
+
 const client = require('./database');
 
 const user_has_pet_typeDataMapper = {

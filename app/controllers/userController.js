@@ -108,14 +108,22 @@ const userController = {
 
   /**
    * updates an entry in "user" table
-   *
-   * @param {Object} request
-   * @param {Object} response
-   * @param {function} next - go to next mw function
-   */
+  *
+  * @param {Object} request
+  * @param {Object} response
+  * @param {function} next - go to next mw function
+  */
   async modifyUser(request, response, next) {
     debug('modifyUser');
     const { id } = request.params;
+
+    // Test if the user exists. if not => 404
+    // user details before modification :
+    const userBeforeSave = await userDataMapper.findUserWithRoleAndPetTypeById(id);
+    debug('userbeforeSave :', userBeforeSave);
+    if (!userBeforeSave) {
+      return next();
+    }
 
     // Test if user is allowed to modify (can only modify its own profile)
     const loggedInUser = request.user;
@@ -125,13 +133,10 @@ const userController = {
       return next(error);
     }
 
-    // user details before modification :
-    const userBeforeSave = await userDataMapper.findUserWithRoleAndPetTypeById(id);
-    debug('userbeforeSave :', userBeforeSave);
     // if the modified user doesn't contain at least one role (required) => error
     const { role_petsitter, role_petowner } = request.body;
 
-    if ((role_petsitter === 'false' && role_petowner === 'false')
+    if ((role_petsitter === false && role_petowner === false)
       && (userBeforeSave.role_names.includes('petowner') || userBeforeSave.role_names.includes('petsitter'))
     ) {
       const error = { statusCode: 400, message: 'At least one role is required' };
