@@ -471,12 +471,16 @@ const userDataMapper = {
       userRoleObj.role_id = 1;
       // if it does AND role_petsitter=false in body : we delete the role from user_has_role
       if (role_petsitter === false) {
-        await user_has_roleDataMapper.deleteUserHasRolesForUser(id, userRoleObj.role_id);
+        // eslint-disable-next-line max-len
+        await user_has_roleDataMapper.deleteUserHasRolesForUser(userRoleObj);
       }
       // 1bis) else: 'petsitter' is not in previous role AND it is updated to 'true':
       // we create role in user_has_role
-    } else if (role_petsitter === true) {
-      await user_has_roleDataMapper.createUserHasRolesForUser(userRoleObj);
+    } else {
+      // eslint-disable-next-line no-lonely-if
+      if (role_petsitter === true) {
+        await user_has_roleDataMapper.createUserHasRolesForUser(userRoleObj);
+      }
     }
 
     // 2) Check if role_petowner already exists for this user
@@ -484,12 +488,15 @@ const userDataMapper = {
       userRoleObj.role_id = 2;
       // if it does AND role_petowner=false in body : we delete the role from user_has_role
       if (role_petowner === false) {
-        await user_has_roleDataMapper.deleteUserHasRolesForUser(id, userRoleObj.role_id);
+        await user_has_roleDataMapper.deleteUserHasRolesForUser(userRoleObj);
       }
     // 2bis) if 'petowner' is not in previous role AND it is updated to 'true':
     // we create role in user_has_role
-    } else if (role_petowner === true) {
-      await user_has_roleDataMapper.createUserHasRolesForUser(userRoleObj);
+    } else {
+      // eslint-disable-next-line no-lonely-if
+      if (role_petowner === true) {
+        await user_has_roleDataMapper.createUserHasRolesForUser(userRoleObj);
+      }
     }
 
     // -----MODIFICATION OF ROLES IN user_has_pet_type (2 cases):

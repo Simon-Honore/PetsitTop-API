@@ -28,26 +28,23 @@ const user_has_roleDataMapper = {
       values: [userRoleObj],
     };
 
-    await client.query(queryUserRole);
+    const results = await client.query(queryUserRole);
+    return results;
   },
 
   /**
    * deletes an entry from user_has_role
    *
-   * @param {number} userId - the user's id
-   * @param {number} roleId - the role id
+   * @param {User_has_role} userRoleObj - a user_has_role obj with user_id and role_id
    */
-  deleteUserHasRolesForUser: async (userId, roleId) => {
+  deleteUserHasRolesForUser: async (userRoleObj) => {
     debug('deleteUserHasRolesForUser');
-    debug('userId :', userId);
-    debug('roleId :', roleId);
+    debug('userRoleObj :', userRoleObj);
     const queryUserRole = {
       text: `
-        DELETE FROM "user_has_role"
-        WHERE "user_id" = $1
-        AND "role_id" = $2
+        SELECT * FROM delete_user_has_role($1);
       `,
-      values: [userId, roleId],
+      values: [userRoleObj],
     };
     const results = await client.query(queryUserRole);
     return results;
