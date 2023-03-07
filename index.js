@@ -45,4 +45,5 @@ app.use(router);
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   debug(`App listening on port http://localhost:${PORT}`);
+  console.log(`App listening on port http://localhost:${PORT}`); // For debugging online
 });

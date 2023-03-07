@@ -25,6 +25,7 @@ const opetErrorController = {
   errorHandler(error, _, response, next) {
     // debug(err.originalError?.message || err.message);
     debug(error.message);
+    console.log(error.message); // For debugging online
     let status = error.statusCode || 500; // 500 : Internal Server Error
     let { message } = error;
 
