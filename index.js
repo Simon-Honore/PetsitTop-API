@@ -21,7 +21,7 @@ app.use(express.json());
 
 // CORS setup : For cross origin requests
 app.use('/', cors({
-  origin: process.env.CORS_DOMAINS ?? '*', // allows our client domain or all origins
+  origin: process.env.CORS_DOMAINS.split(','), // allows our client domain or all origins
 }), router);
 
 // Client requests limiter setup :
