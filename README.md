@@ -7,8 +7,7 @@ N'hésitez pas à cloner ce dépôt GitHub !
 Installation des dépendances :
 
 ```bash
-npm init
-npm install
+npm i
 ```
 
 Lancement du serveur :
