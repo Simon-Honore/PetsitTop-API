@@ -17,6 +17,16 @@ const debug = require('debug')('opet:petDataMapper');
  */
 
 /**
+ * a PetGet type
+ *
+ * @typedef {object} PetGet
+ * @property {number} id - pet's id
+ * @property {string} name - pet's name
+ * @property {string} presentation - pet's presentation
+ * @property {string} pet_type_name - pet's pet_type name
+ */
+
+/**
  * a pet type for creation/modification
  *
  * @typedef {object} PetCreateModify
@@ -61,29 +71,29 @@ const petDataMapper = {
    * fetches all pets according to their user's id
    *
    * @param {number} userId - user id
-   * @returns {array<Pet>} array of pets
+   * @returns {array<PetGet>} array of pets with id, name, presentation & pet_type name
    */
-  // async findAllPetsByUserId(userId) {
-  //   debug('findAllPetsByUserId');
-  //   debug('userId :', userId);
+  async findAllPetsByUserId(userId) {
+    debug('findAllPetsByUserId');
+    debug('userId :', userId);
 
-  //   const query = {
-  //     text: `
-  //       SELECT
-  //         "pet"."id",
-  //         "pet"."name",
-  //         "pet"."presentation",
-  //         "pet_type"."name" AS "pet_type"
-  //       FROM "pet"
-  //       JOIN "pet_type" ON "pet"."pet_type_id"="pet_type"."id"
-  //       WHERE "pet"."user_id" = $1;
-  //       `,
-  //     values: [userId],
-  //   };
+    const query = {
+      text: `
+        SELECT
+          "pet"."id",
+          "pet"."name",
+          "pet"."presentation",
+          "pet_type"."name" AS "pet_type"
+        FROM "pet"
+        JOIN "pet_type" ON "pet"."pet_type_id"="pet_type"."id"
+        WHERE "pet"."user_id" = $1;
+        `,
+      values: [userId],
+    };
 
-  //   const results = await client.query(query);
-  //   return results.rows;
-  // },
+    const results = await client.query(query);
+    return results.rows;
+  },
 
   /**
    * adds (creates) a pet for a user

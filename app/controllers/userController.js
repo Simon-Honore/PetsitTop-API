@@ -90,7 +90,7 @@ const userController = {
     // doc: https://www.npmjs.com/package/bcrypt
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(body.password, saltRounds);
-    // on replace the typed password with the hashed one to store in DB:
+    // we replace the typed password with the hashed one to store in DB:
     body.password = hashedPassword;
 
     // Security: we remove the confirmPassword (not hashed) from request.body to prevent data leaks:
@@ -98,7 +98,7 @@ const userController = {
 
     const user = await userDataMapper.createUser(bodySafe);
 
-    // On enlève le password de l'objet user
+    // we remove 'password' from user before sending to client
     const { password, ...userWithoutPwd } = user;
 
     debug('Created user : ', userWithoutPwd);
@@ -192,7 +192,6 @@ const userController = {
     // Delete the user
     await userDataMapper.deleteUserById(id);
 
-    // Response
     return response.status(204).send();
   },
 };

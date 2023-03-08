@@ -52,12 +52,12 @@ const authenticateToken = require('../middlewares/authenticateToken');
  */
 
 /**
- * GET /user/{id}/ads
+ * GET /user/{userId}/ads
  *
  * @summary get all ads by user id
  * @tags Ads
  *
- * @param {number} id.path - user id
+ * @param {number} userId.path - user id
  *
  * @return {array<Ad>} 200 - success response
  * @return {object} 500 - internal server error
@@ -68,12 +68,12 @@ const authenticateToken = require('../middlewares/authenticateToken');
 adRouter.get('/user/:id([0-9]+)/ads', authenticateToken, controllerHandler(adController.getAdsByUserId));
 
 /**
- * POST /user/{id}/ads
+ * POST /user/{userId}/ads
  *
  * @summary create a new ad for one user
  * @tags Ads
  *
- * @param {number} id.path - user id
+ * @param {number} userId.path - user id
  * @param {AdCreateModify} request.body - ad
  *
  * @return {Ad} 201 - success response
@@ -100,12 +100,12 @@ adRouter.post('/user/:id([0-9]+)/ads', authenticateToken, validate(adPostSchema,
 adRouter.get('/ads', authenticateToken, validate(adGetSchema, 'query'), controllerHandler(adController.getAllAds));
 
 /**
- * PUT /ads/{id}
+ * PUT /ads/{adId}
  *
  * @summary modify an ad
  * @tags Ads
  *
- * @param {number} id.path - ad id
+ * @param {number} adId.path - ad id
  * @param {AdCreateModify} request.body - post
  *
  * @return {Ad} 200 - success response
@@ -118,12 +118,12 @@ adRouter.get('/ads', authenticateToken, validate(adGetSchema, 'query'), controll
 adRouter.put('/ads/:id([0-9]+)', authenticateToken, validate(adPutSchema, 'body'), controllerHandler(adController.updateAdById));
 
 /**
- * DELETE /ads/{id}
+ * DELETE /ads/{adId}
  *
  * @summary delete an ad
  * @tags Ads
  *
- * @param {number} id.path - ad id
+ * @param {number} adId.path - ad id
  *
  * @return {object} 204 - success response
  * @return {object} 500 - internal server error

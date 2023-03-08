@@ -32,6 +32,22 @@ const { put: petPutSchema } = require('../validations/schemas/pet.schema');
  */
 
 /**
+ * GET /user/{userId}/pets
+ *
+ * @summary get all pets by user id
+ * @tags Pets
+ *
+ * @param {number} userId.path - user id
+ *
+ * @return {array<Pet>} 200 - success response
+ * @return {object} 500 - internal server error
+ * @return {object} 401 - unauthorized
+ *
+ * @security BearerAuth
+ */
+petRouter.get('/user/:id([0-9]+)/pets', authenticateToken, controllerHandler(petController.getPetsByUserId));
+
+/**
  * POST /user/{userId}/pets
  *
  * @summary add a new pet to a user
