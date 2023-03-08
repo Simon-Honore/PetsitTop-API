@@ -33,7 +33,7 @@ N'hésitez pas à visiter [notre site PetsitTop](https://projet-02-pet-sitter-fr
 
 ## Fonctionnalités
 
-Tout __visiteur__ (non connecté) du site peut rechercher des profils de Petsitters disponibles, par département et par type d'animal à faire garder.  
+Tout __visiteur__ (non connecté) du site peut rechercher des profils de Petsitters disponibles, en filtrant par département et par type d'animal à faire garder.  
 
 Une fois connecté, un __utilisateur__ ("user") peut :
 
@@ -52,27 +52,111 @@ Une fois connecté, un __utilisateur__ ("user") peut :
 
 ## L'équipe
 
-- DAÏ Inès
-- HONORÉ Simon
-- KELLER Catherine
-- SKICA Axelle  
+- DAÏ Inès  
+  
+```js
+  const daiInes = {
+    first_name: "Inès",
+    last_name: "Daï",
+    superpowers: [
+        "rappelle à l'équipe de prendre des pauses",
+        "réalise des GIFs de chats"
+        ],
+    project_main_role: "Front-end",
+    contact_info: {
+        github: "https://github.com/ines-dai",
+        linkedin: "https://www.linkedin.com/in/ines-a-d/",
+        email: "",
+        website:""
+        }
+    };
+```
 
-## Technologies utilisées :
+- HONORÉ Simon
+
+```js
+  const honoreSimon = {
+    first_name: "Simon",
+    last_name: "Honoré",
+    superpowers: [
+        "a su trouver le nom du site",
+        "fier Petowner d'un adorable chien"
+        ],
+    project_main_role: "Front-end",
+    contact_info: {
+        github: "https://github.com/Simon-Honore",
+        linkedin: "https://www.linkedin.com/in/simon-honore/",
+        email: "simon.honore6@gmail.com",
+        website:""
+        }
+    };
+```
+
+- KELLER Catherine
+
+```js
+  const kellerCatherine = {
+    first_name: "Catherine",
+    last_name: "Keller",
+    superpowers: [
+        "n'hésite pas à passer du back-end au front-end",
+        "aime et abuse des post-its"
+        ],
+    project_main_role: "Back-end",
+    contact_info: {
+        github: "https://github.com/CatherineKeller",
+        linkedin: "https://www.linkedin.com/in/kellercatherine/",
+        website:"https://www.catherine-keller.fr"
+        }
+    };
+```
+
+- SKICA Axelle
+
+```js
+  const skicaAxelle = {
+    first_name: "Axelle",
+    last_name: "Skica",
+    superpowers: [
+        "traductrice officielle des commentaires de code",
+        "passionnée de films de Noël"
+        ],
+    project_main_role: "Back-end",
+    contact_info: {
+        github: "https://github.com/Axelle-SKICA",
+        linkedin: "https://www.linkedin.com/in/axelle-skica",
+        email:"axelle.skica@gmail.com"
+        }
+    };
+```
+
+## Technologies utilisées
+
+![VSCode](https://img.shields.io/badge/visual_studio_code-%23007ACC.svg?style=for-the-badge&logo=visual-studio-code&logoColor=white)
+![Git](https://img.shields.io/badge/git-%23F05032.svg?style=for-the-badge&logo=git&logoColor=white)
+![Railway](https://img.shields.io/badge/railway-13121d?style=for-the-badge&logo=railway&logoColor=white)
+![Trello](https://img.shields.io/badge/trello-0052CC?style=for-the-badge&logo=trello&logoColor=white)
+
+### Front-end
 
 ![JavaScript](https://img.shields.io/badge/javascript-%23F7DF1E.svg?style=for-the-badge&logo=javascript&logoColor=black)
 ![React](https://img.shields.io/badge/react-%232d415c.svg?style=for-the-badge&logo=react&logoColor=%2304D8F9)
 ![Redux](https://img.shields.io/badge/redux-%23764ABC.svg?style=for-the-badge&logo=redux&logoColor=white)
 ![Vite](https://img.shields.io/badge/vite-636cff?style=for-the-badge&logo=vite&logoColor=white)
+![Joi](https://img.shields.io/badge/joi-0281fe?style=for-the-badge)
+![Json Web tokens](https://img.shields.io/badge/JWT-fb005b?style=for-the-badge&logo=jsonwebtokens&logoColor=ffffff)
+
+### Back-end
+
+![JavaScript](https://img.shields.io/badge/javascript-%23F7DF1E.svg?style=for-the-badge&logo=javascript&logoColor=black)
 ![NodeJS](https://img.shields.io/badge/node-%23339933.svg?style=for-the-badge&logo=node.js&logoColor=white)
 ![ExpressJS](https://img.shields.io/badge/Express-ccc?style=for-the-badge&logo=express&logoColor=black)
-![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
-![VSCode](https://img.shields.io/badge/visual_studio_code-%23007ACC.svg?style=for-the-badge&logo=visual-studio-code&logoColor=white)
-![Git](https://img.shields.io/badge/git-%23F05032.svg?style=for-the-badge&logo=git&logoColor=white)
-![Insomnia](https://img.shields.io/badge/insomnia-%234000BF.svg?style=for-the-badge&logo=insomnia&logoColor=white)
 ![Joi](https://img.shields.io/badge/joi-0281fe?style=for-the-badge)
-![Swagger](https://img.shields.io/badge/swagger-84ea2c?style=for-the-badge&logo=swagger&logoColor=000000)
 ![Json Web tokens](https://img.shields.io/badge/JWT-fb005b?style=for-the-badge&logo=jsonwebtokens&logoColor=ffffff)
+![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
 ![Sqitch](https://img.shields.io/badge/sqitch-22538e?style=for-the-badge&logo=data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iMTAyNHB4IiBoZWlnaHQ9IjEwMjRweCIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj4KICAgIDwhLS0gR2VuZXJhdG9yOiBTa2V0Y2ggNTMuMiAoNzI2NDMpIC0gaHR0cHM6Ly9za2V0Y2hhcHAuY29tIC0tPgogICAgPHRpdGxlPnNxaXRjaC1tYXJrLXdoaXRlPC90aXRsZT4KICAgIDxkZXNjPkNyZWF0ZWQgd2l0aCBTa2V0Y2guPC9kZXNjPgogICAgPGcgaWQ9IlNxaXRjaCIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+CiAgICAgICAgPGcgaWQ9InNxaXRjaC1sb2dvLXdoaXRlIiBmaWxsPSIjRkZGRkZGIj4KICAgICAgICAgICAgPHBhdGggZD0iTTY0MC4yNzU3OTUsMTY2LjU5OTc5IEw0MDUuMjU2NjMyLDMwMi4yODgxNjggQzM5Ny44ODUxMzEsMjk0LjI3NjA3IDM4OS4xODk1ODUsMjg3LjIzMTIzNSAzNzkuMjYyNzk0LDI4MS41IEMzMjYuNjUwNjA2LDI1MS4xMjQzMzkgMjU5LjM3NTY2MSwyNjkuMTUwNjA2IDIyOSwzMjEuNzYyNzk0IEMxOTguNjI0MzM5LDM3NC4zNzQ5ODMgMjE2LjY1MDYwNiw0NDEuNjQ5OTI4IDI2OS4yNjI3OTQsNDcyLjAyNTU4OSBDMzE0Ljg2OTQzNSw0OTguMzU2NTk1IDM3MS40OTM5ODIsNDg4LjMxNzM2NyA0MDUuNTUwNjY5LDQ1MC45MDcxODQgTDYyNy4xNzkwOTMsNTc4Ljg2NDQxNCBDNjI0LjQ1NzA2LDU4OC40NDEyMzcgNjIzLDU5OC41NTA0NjEgNjIzLDYwOSBDNjIzLDYyMC41OTg4OTIgNjI0Ljc5NTIxNCw2MzEuNzc4NDkgNjI4LjEyMjk0NSw2NDIuMjc2MDk3IEw0MDUuMDYyNDc1LDc3MS4wNjAxMiBDMzk4LjA1MTA0LDc2My4zODY4MDIgMzg5LjgyNTIxMSw3NTYuNTg1OTQ0IDM4MC40NjAxMDcsNzUwLjk1ODgyMSBDMzM1LjQ1MTg2OSw3MjMuOTE1MTQ0IDI3OC44NjA2NTMsNzMyLjgzMjc2MSAyNDQuMTI5MjQ3LDc2OS4zNzM0NDkgTDcuMTA1NDI3MzZlLTE1LDYyMi42ODU3OTggTDAsMTUzLjYgQzAsNjguODEyOCAyMjkuMzc2LDAgNTEyLDAgQzc5NC42MjQsMCAxMDI0LDY4LjgxMjggMTAyNCwxNTMuNiBMMTAyNCw4NzAuNCBDMTAyNCw5MjguNTY3NTM0IDkxNi4wNDM1MjcsOTc5LjIxNjY3IDc1Ny4wMDAwODksMTAwNS4yODY1NiBMNzU3LDcxNi4zNzQxMiBDODA2LjIwOTQ4LDcwNS40MjMzNCA4NDMsNjYxLjUwODExMyA4NDMsNjA5IEM4NDMsNTQ4LjI0ODY3OCA3OTMuNzUxMzIyLDQ5OSA3MzMsNDk5IEM2OTkuOTM1MzY0LDQ5OSA2NzAuMjc4MDU1LDUxMy41ODg0OTggNjUwLjExMzU1OCw1MzYuNjgwMDA4IEw0MjkuMzgzNzY3LDQwOS4yNDE2MDMgQzQzNi4wOTc5NzgsMzg3LjU4MDMxMyA0MzUuNzc1OTI5LDM2NC43Nzg1NjQgNDI5LjIzMTA2MSwzNDMuODcyMTUgTDY2NC4yNzU3OTUsMjA4LjE2OTAxIEw2OTYuMzI1MjIzLDI2My42ODAyNDcgTDgxNS4zMzIxNzQsOTMuODA2MzMyNCBMNjA4LjcxMzU3MywxMTEuOTMyNDE3IEw2NDAuMjc1Nzk1LDE2Ni41OTk3OSBaIE02NTIuMjk1NTk5LDY4My43NDU2MzUgQzY2Ny4xOTM4MDgsNjk5LjgyMzkwMiA2ODYuODM3NDAyLDcxMS40NDIxOSA3MDksNzE2LjM3NDEyIEw3MDksMTAxMi4yMDQ3IEM2NDguMzQ5NzcsMTAxOS44MDI5MyA1ODEuNzk4NzUyLDEwMjQgNTEyLDEwMjQgQzIyOS4zNzYsMTAyNCAwLDk1NS4xODcyIDAsODcwLjQgTDAsNjc4LjY4NDIwMSBMMjE5LjQwNzQyLDgxMC41MTc0NzkgQzIwMy40NDkzMTQsODU4LjMzODMwNSAyMjIuMTQzNDkyLDkxMi40OTE5NSAyNjcuMTUxNzMsOTM5LjUzNTYyNyBDMzE5LjIyNTc3Nyw5NzAuODI0ODcyIDM4Ni44MDUwNzcsOTUzLjk3NTQ2IDQxOC4wOTQzMjEsOTAxLjkwMTQxMyBDNDM0Ljg3NTAzMyw4NzMuOTczNjE4IDQzNy44MDk3MzcsODQxLjU4NjA4NCA0MjguODkwNTE2LDgxMi43Mjg2MTkgTDY1Mi4yOTU1OTksNjgzLjc0NTYzNSBaIE0yOTMuNDE4NjcyLDg5NS44MjAwOTUgQzI2NS40ODgwNDcsODc5LjAzNzY4MiAyNTYuNDUwNjM1LDg0Mi43OTA2MDMgMjczLjIzMzA0OCw4MTQuODU5OTc4IEMyOTAuMDE1NDYsNzg2LjkyOTM1MyAzMjYuMjYyNTQsNzc3Ljg5MTk0MSAzNTQuMTkzMTY1LDc5NC42NzQzNTQgQzM4Mi4xMjM3OSw4MTEuNDU2NzY2IDM5MS4xNjEyMDIsODQ3LjcwMzg0NSAzNzQuMzc4Nzg5LDg3NS42MzQ0NzEgQzM1Ny41OTYzNzYsOTAzLjU2NTA5NiAzMjEuMzQ5Mjk3LDkxMi42MDI1MDggMjkzLjQxODY3Miw4OTUuODIwMDk1IFogTTc5Miw2MDkgQzc5Miw2NDEuNTg0OCA3NjUuNTg0OCw2NjggNzMzLDY2OCBDNzAwLjQxNTIsNjY4IDY3NCw2NDEuNTg0OCA2NzQsNjA5IEM2NzQsNTc2LjQxNTIgNzAwLjQxNTIsNTUwIDczMyw1NTAgQzc2NS41ODQ4LDU1MCA3OTIsNTc2LjQxNTIgNzkyLDYwOSBaIE0zNTMuNzYyNzk0LDMyNS42NjcyOTYgQzM4MS45ODIwNTksMzQxLjk1OTY5NiAzOTEuNjUwNjkzLDM3OC4wNDM1MyAzNzUuMzU4MjkzLDQwNi4yNjI3OTQgQzM1OS4wNjU4OTMsNDM0LjQ4MjA1OSAzMjIuOTgyMDU5LDQ0NC4xNTA2OTMgMjk0Ljc2Mjc5NCw0MjcuODU4MjkzIEMyNjYuNTQzNTMsNDExLjU2NTg5MyAyNTYuODc0ODk1LDM3NS40ODIwNTkgMjczLjE2NzI5NiwzNDcuMjYyNzk0IEMyODkuNDU5Njk2LDMxOS4wNDM1MyAzMjUuNTQzNTMsMzA5LjM3NDg5NSAzNTMuNzYyNzk0LDMyNS42NjcyOTYgWiIgaWQ9InNxaXRjaC1tYXJrLXdoaXRlIj48L3BhdGg+CiAgICAgICAgPC9nPgogICAgPC9nPgo8L3N2Zz4=)
+![Swagger](https://img.shields.io/badge/swagger-84ea2c?style=for-the-badge&logo=swagger&logoColor=000000)
+![Insomnia](https://img.shields.io/badge/insomnia-%234000BF.svg?style=for-the-badge&logo=insomnia&logoColor=white)
 
 ## Routes API
 
@@ -80,7 +164,7 @@ Une fois connecté, un __utilisateur__ ("user") peut :
 |----|:---------:|:---------|
 |/login|POST|connecter un user à son compte|
 ||
-|/users?department=&pet_type= |GET|récupérer tous les users "petsitters" disponibles (role=petsitter & availability=true) avec filtre sur "department" (localisation) et "pet_type" (type d'animaux gardés)|
+|/users?department=&pet_type= |GET|récupérer tous les users "petsitters" disponibles (role=petsitter & availability=true) avec filtre sur "department" (localisation) et "pet_type" (type d'animal à faire garder)|
 |/users|POST|créer un nouvel utilisateur (inscription)|
 |/users/:id|GET|récupérer les infos d'un user|
 |/users/:id|PUT|modifier un user|
