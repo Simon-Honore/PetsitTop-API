@@ -15,10 +15,10 @@ const adController = {
     debug('getAllAds');
     // const { limit, start } = request.query;
 
-    // Pagination par défaut (si aucune valeur n'est passée en paramètre)
+    // default paging (if we get no value in parameters)
     let limit = 100;
     let start = 0;
-    // Valeurs de la pagination envoyées par le client
+    // if we get paging values from client:
     if (request.query.limit && request.query.start) {
       limit = Number(request.query.limit);
       start = Number(request.query.start);
@@ -28,8 +28,8 @@ const adController = {
 
     response.status(200).json({
       results: ads,
-      size: ads.length, // Nombre de résultats affichés
-      limit, // Nombre de résultats max par page
+      size: ads.length, // number of results shown
+      limit, // max number of results per page
       start, // Offset
     });
   },
@@ -50,7 +50,7 @@ const adController = {
 
     // If the user does not exist, we return an error 404
     if (!isExistingUser) {
-      debug(`Ad ${id} does not exists`);
+      debug(`User ${id} does not exists`);
       const error = { statusCode: 404, message: 'User does not exists' };
       return next(error);
     }
@@ -67,8 +67,8 @@ const adController = {
    */
   async createAdByUserId(request, response, next) {
     debug('createAd');
-    const { body } = request; // données de l'annonce
-    const { id } = request.params; // id de l'utilisateur
+    const { body } = request; // ad data from the form
+    const { id } = request.params; // user id
 
     // Test if the user exists
     const isExistingUser = await userDataMapper.findUserById(id);
@@ -80,17 +80,16 @@ const adController = {
       return next(error);
     }
 
-    // Test if the user has the right to access this route
+    // If user id different from "loggedInUser"."id" => error 403 (doesn't have the rights)
     const loggedInUser = request.user;
     if (Number(id) !== loggedInUser.id) {
       const error = { statusCode: 403, message: 'Forbidden' };
       return next(error);
     }
 
-    // If the user exists, we create the ad
+    // If the user exists and has the rights, we create the ad
     const ad = await adDataMapper.createAdByUserId(body, id);
 
-    // Réponse
     return response.status(201).json(ad);
   },
 
@@ -116,7 +115,7 @@ const adController = {
       return next();
     }
 
-    // If the "ad"."user_id" is different from "loggedInUser"."id", we return an error 403
+    // If "ad"."user_id" different from "loggedInUser"."id" => error 403 (doesn't have the rights)
     if (loggedInUser.id !== isExistingAd.user_id) {
       const error = { statusCode: 403, message: 'Forbidden' };
       return next(error);
@@ -125,7 +124,6 @@ const adController = {
     // If the ad exists and the user has the right to access, we update it with the new data
     const ad = await adDataMapper.updateAdById(id, body);
 
-    // Response
     return response.status(200).json(ad);
   },
 
@@ -150,7 +148,7 @@ const adController = {
       return next();
     }
 
-    // If the "ad"."user_id" is different from "loggedInUser"."id", we return an error 403
+    // If "ad"."user_id" different from "loggedInUser"."id" => error 403 (doesn't have the rights)
     if (loggedInUser.id !== isExistingAd.user_id) {
       const error = { statusCode: 403, message: 'Forbidden' };
       return next(error);
@@ -159,7 +157,6 @@ const adController = {
     // Delete the ad
     await adDataMapper.deleteAdById(id);
 
-    // Response
     return response.status(204).send();
   },
 };

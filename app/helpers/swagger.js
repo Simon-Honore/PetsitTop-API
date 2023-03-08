@@ -7,7 +7,7 @@ const swaggerOptions = {
     description: 'This is an API for an app to find and contact petsitters, or to find pets to petsit.',
   },
   baseDir: path.join(__dirname, 'app'),
-  filesPattern: '../../routers/*.js',
+  filesPattern: '../../routers/*.js', // path to where routes are defined
   swaggerUIPath: '/api-docs', // API documentation route
   security: {
     BearerAuth: { // authentification with JWT

@@ -5,6 +5,30 @@ const userDataMapper = require('../models/userDataMapper');
 const petController = {
 
   /**
+   * responds with one entry from "pet" relation
+   *
+   * @param {Object} request
+   * @param {Object} response
+   * @param {function} next
+   */
+  async getPetsByUserId(request, response, next) {
+    debug('getPetsByUserId');
+    const { id } = request.params;
+
+    // Test if the user exists
+    const isExistingUser = await userDataMapper.findUserById(id);
+
+    // If the user does not exist, we return an error 404
+    if (!isExistingUser) {
+      debug(`User ${id} does not exists`);
+      const error = { statusCode: 404, message: 'User does not exists' };
+      return next(error);
+    }
+    const pets = await petDataMapper.findAllPetsByUserId(id);
+    return response.status(200).json(pets);
+  },
+
+  /**
    * creates one entry in "pet" table
    *
    * @param {Object} request
@@ -24,6 +48,7 @@ const petController = {
     }
 
     // check if the :id in params for the route matches the logged in user's id:
+    // if not : 403 (doesn't have rights)
     const loggedInUser = request.user;
     debug('loggedInUser :', loggedInUser);
     if (Number(id) !== loggedInUser.id) {
@@ -63,8 +88,8 @@ const petController = {
       return next();
     }
 
-    // Test if the user has the right to access this route
-    // If the "pet"."user_id" is different from "loggedInUser"."id", we return an error 403
+    // check if the :id in params for the route matches the logged in user's id:
+    // if not : 403 (doesn't have rights)
     const loggedInUser = request.user;
     if (loggedInUser.id !== isExistingPet.user_id) {
       const error = { statusCode: 403, message: 'Forbidden' };
@@ -95,8 +120,8 @@ const petController = {
       return next();
     }
 
-    // Test if the user has the right to access this route
-    // If the "pet"."user_id" is different from "loggedInUser"."id", we return an error 403
+    // check if the :id in params for the route matches the logged in user's id:
+    // if not : 403 (doesn't have rights)
     const loggedInUser = request.user;
     if (loggedInUser.id !== isExistingPet.user_id) {
       const error = { statusCode: 403, message: 'Forbidden' };

@@ -13,22 +13,27 @@ const jwt = require('jsonwebtoken'); // Json Web Tokens for authentification
 // eslint-disable-next-line consistent-return
 module.exports = function authenticateToken(request, _, next) {
   debug('authenticateToken');
+  // extract token from headers:
   const authHeader = request.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
   debug('token', token);
 
+  // if no token found => 401
   if (!token) {
     const error = { statusCode: 401, message: 'Invalid credentials' };
     return next(error);
   }
 
+  // if there is a token, we check it with ACCES_TOKEN_SECRET in .env
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
     debug('jwt.verify');
+    // if it doesn't match => 401
     if (err) {
       const error = { statusCode: 401, message: 'Invalid credentials' };
       return next(error);
     }
 
+    // if ok : we get to next middleware with this logged in user
     request.user = user;
     debug('request.user', request.user);
 

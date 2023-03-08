@@ -29,15 +29,15 @@ const opetErrorController = {
     let status = error.statusCode || 500; // 500 : Internal Server Error
     let { message } = error;
 
-    // Erreurs de validation (Joi)
+    // Validation errors(Joi)
     if (error.name === 'ValidationError') {
       status = 400; // 400: Bad Request
-      message = 'Les données transmises ne sont pas valides'; // Message d'erreur générique retourné à l'API
+      message = 'Les données transmises ne sont pas valides'; // error message sent to API
     }
 
-    // Internal server Errors:
-    // 23505 : contrainte d'unicité
-    // 23503 : contrainte de clé étrangère
+    // Specific Internal Server Errors:
+    // 23505 : violation of unique constraint
+    // 23503 : violation of foreign key constraint
     if (error.code === '23505' || error.code === '23503') {
       let { detail } = error;
       detail += ` Table : ${error.table}`;

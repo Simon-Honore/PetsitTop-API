@@ -16,6 +16,14 @@ const adDataMapper = {
    * @property {string} updated_at - ad update date
    */
 
+  /** a create/modify Ad (for body) type
+   * @typedef {object} AdCreateModify
+   * @property {string} title - ad title
+   * @property {string} content - ad content
+   * @property {string} city - ad city
+   * @property {string} postal_code - ad postal code
+  */
+
   /** an AdUser type
    * @typedef {object} AdUser
    * @property {number} id - user id
@@ -87,7 +95,7 @@ const adDataMapper = {
   /**
    * create an entry in the relation "ad"
    *
-   * @param {Object} createAdObj - the ad to create
+   * @param {AdCreateModify} createAdObj - the ad to create
    * @param {number} user_id - the user's id
    * @returns {array<Ad>} array of ad entries
    */
@@ -109,7 +117,7 @@ const adDataMapper = {
   /**
    * modify an entry in the relation "ad"
    *
-   * @param {Object} updateAdObj - the ad to update
+   * @param {AdCreateModify} updateAdObj - the ad to update
    * @param {number} id - id of the ad
    * @returns {Object<Ad>} array of ad entries
    */

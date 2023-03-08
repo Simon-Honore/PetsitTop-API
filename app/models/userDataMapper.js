@@ -353,7 +353,7 @@ const userDataMapper = {
       role_petsitter, role_petowner, pet_type, ...createObj2
     } = createObj;
 
-    // Insertion de l'user dans la table "user"
+    // we insert user table "user"
     const queryUser = {
       text: `
         SELECT * FROM new_user($1);
@@ -363,7 +363,9 @@ const userDataMapper = {
     // debug('query', query);
     const results = await client.query(queryUser);
 
+    // ---------------------------------------------------------------
     // ----- WE AD THE ROLES FOR THE USER IN TABLE "user_has_role" :
+    // ---------------------------------------------------------------
     // 1 insert if role petsitter and/or 1 insert if role petowner
 
     // we get the id of the user we just inserted in table "user" :
@@ -376,13 +378,16 @@ const userDataMapper = {
     // default role is petowner
     const userRoleObj = { user_id: userId, role_id: 2 };
 
-    // we check if the two roles are false, if so we add the default role (petowner)
+    // 1) we check if the two roles are false, if so we add the default role (petowner)
     if (role_petsitter === false && role_petowner === false) {
       userRoleObj.role_id = 2; // Petowner by default
-      const resultPetsitter = await user_has_roleDataMapper.createUserHasRolesForUser(userRoleObj);
-      resultsRow.roles.push(resultPetsitter.rows[0].role_id);
+      const resultPetowner = await user_has_roleDataMapper.createUserHasRolesForUser(userRoleObj);
+
+      // we push the role_id in the array of the "roles" property
+      resultsRow.roles.push(resultPetowner.rows[0].role_id);
     }
 
+    // 2) if "Petsitter" checkbox has been checked :
     // debug('role_petsitter', role_petsitter);
     if (role_petsitter === true) {
       userRoleObj.role_id = 1;
@@ -392,6 +397,7 @@ const userDataMapper = {
       // we push the role_id in the array of the "roles" property
       resultsRow.roles.push(resultPetsitter.rows[0].role_id);
     }
+    // 3) if "Petowner" checkbox has been checked :
     // debug('role_petowner', role_petowner);
     if (role_petowner === true) {
       userRoleObj.role_id = 2;
@@ -404,7 +410,9 @@ const userDataMapper = {
 
     // debug('resultsRow.roles :', resultsRow.roles);
 
+    // ---------------------------------------------------------------
     // -----WE ADD THE PET_TYPES FOR THIS USER IN TABLE "user_has_pet_type":
+    // ---------------------------------------------------------------
     // pet_types is an array of string, so first we cast to array of numbers:
     let petTypesToNumbers = [];
     if (pet_type) { // Si pet_type est vide, on ne fait rien
@@ -417,7 +425,7 @@ const userDataMapper = {
 
     const allPetTypes = resultsPetType.rows;
 
-    // we add a "pet_types" property to the user we'll return (array of the pet_type(s))
+    // we add a "pet_types" property to the user we'll return (array of the pet_type(s) id)
     resultsRow.pet_types = [];
     // for each "pet_type" of the petsitter we push the "pet_type_id" in the "pet_types" array
     allPetTypes.forEach((petType) => {
@@ -460,10 +468,12 @@ const userDataMapper = {
     const results = await client.query(queryUser);
     debug('userAfterSave', results.rows[0]);
 
+    // ---------------------------------------------------------------
     // -----MODIFICATION OF ROLES IN "user_has_role":
+    // ---------------------------------------------------------------
     const userRoleObj = { user_id: id };
 
-    // 1) Check if role_petsitter already exists for this user
+    // 1) Check if role_petsitter already exists for this user before update
     if (userBeforeSave.role_names.includes('petsitter')) {
       // debug('userBeforeSave was a petsitter');
       userRoleObj.role_id = 1;
@@ -473,7 +483,7 @@ const userDataMapper = {
         // eslint-disable-next-line max-len
         await user_has_roleDataMapper.deleteUserHasRolesForUser(userRoleObj);
       }
-      // 1bis) else: 'petsitter' is not in previous role AND it is updated to 'true':
+      // 1bis) else: 'petsitter' was not in previous role AND it is updated to 'true':
       // we create role in user_has_role
     } else {
       // debug('userBeforeSave was NOT a petsitter');
@@ -485,7 +495,7 @@ const userDataMapper = {
       }
     }
 
-    // 2) Check if role_petowner already exists for this user
+    // 2) Check if role_petowner already exists for this user before update
     if (userBeforeSave.role_names.includes('petowner')) {
       // debug('userBeforeSave was a petowner');
       userRoleObj.role_id = 2;
@@ -494,7 +504,7 @@ const userDataMapper = {
         // debug('role_petowner === false');
         await user_has_roleDataMapper.deleteUserHasRolesForUser(userRoleObj);
       }
-      // 2bis) if 'petowner' is not in previous role AND it is updated to 'true':
+      // 2bis) if 'petowner' was not in previous role AND it is updated to 'true':
       // we create role in user_has_role
     } else {
       // debug('userBeforeSave was NOT a petowner');
@@ -506,7 +516,9 @@ const userDataMapper = {
       }
     }
 
+    // ---------------------------------------------------------------
     // -----MODIFICATION OF ROLES IN user_has_pet_type (2 cases):
+    // ---------------------------------------------------------------
     // if pet_type is not empty, we cast array of strings to array of numbers
     let petTypesToNb = [];
     if (pet_type) {
@@ -515,23 +527,28 @@ const userDataMapper = {
 
     // 1) for the new "checked" pet_types in modification form,
     // we add them to table "user_has_pet_type" for the user
+
+    // we make an array of only the added pet_types
     const addedPetTypes = petTypesToNb.filter(
       (type) => !userBeforeSave.pet_types_ids.includes(type),
     );
     debug('Added pet_types :', addedPetTypes);
-    // we add the pet-types in the table "user_has_pet_type":
+    // we add these pet-types in the table "user_has_pet_type":
     await user_has_pet_typeDataMapper.createUserHasPetTypesForUser(id, addedPetTypes);
 
     // 2) for the "un-checked" pet_types in modification form
     /// we delete them from table "user_has_pet_type" for the user
+
+    // we make an array of only the removed pet_types
     const removedPetTypes = userBeforeSave.pet_types_ids.filter(
       (type) => !petTypesToNb.includes(type),
     );
     debug('Removed pet_types :', removedPetTypes);
-    // we delete the pet-types from the table "user_has_pet_type":
+    // we delete these pet-types from the table "user_has_pet_type":
     await user_has_pet_typeDataMapper.deleteUserHasPetTypesForUser(id, removedPetTypes);
 
-    // get the updated user from DB:
+    // -------------------------------------------------------------------------
+    // We get the now updated user from DB (including arrays of roles, epet_types etc) to send it:
     const userAfterSave = await userDataMapper.findUserById(id);
     // debug('userAfterSave', userAfterSave);
 
