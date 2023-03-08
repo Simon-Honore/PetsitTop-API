@@ -1,4 +1,4 @@
-# PetsitTop
+# PetsitTop :paw_prints:
 
 ## Lancement
 
@@ -80,13 +80,13 @@ Une fois connecté, un __utilisateur__ ("user") peut :
 |/users/:id|PUT|modifier un user|
 |/users/:id|DELETE|supprimer un user|
 ||
-|/user/:id/pets|GET|récupérer les infos des animaux ("pets") d'un user|
+|/user/:id/pets|GET|récupérer tous les animaux ("pets") d'un user|
 |/user/:id/pets|POST|créer un "pet" pour un user|
 |/pets/:id|PUT|modifier un "pet"|
 |/pets/:id|DELETE|supprimer un "pet"|
 ||
 |/ads|GET|récupérer les détails de l'ensemble des annonces ("ads") existantes|
-|/user/:id/ads|GET|récupérer les détails des "ads" d'un user|
+|/user/:id/ads|GET|récupérer toutes les annonces "ads" d'un user|
 |/user/:id/ads|POST|créer une "ad" pour un user|
 |/ads/:id|PUT|modifier une "ad"|
 |/ads/:id|DELETE|supprimer une "ad"|
