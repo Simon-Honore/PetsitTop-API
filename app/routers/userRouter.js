@@ -45,7 +45,7 @@ const authenticateToken = require('../middlewares/authenticateToken');
  * @property {boolean} availability - user's availability (if role petsitter)
  * @property {string} availability_details - user's availability details (if role petsitter)
  * @property {array<UserRole>} roles - array of user's roles (id and name)
- * @property {array<UserPetType>} roles - array of user's pet_types (id and name) if role petsitter
+ * @property {array<UserPetType>} pet_types - array of user pet_types (id & name) if role petsitter
  * @property {array<UserPet>} pets - array of user's pets (id, name, pet_type name, presentation)
  * @property {array<UserAd>} ads - array of user's ads (id, city, title, content)
  * @property {string} created_at - date of creation
