@@ -5,7 +5,7 @@ const userDataMapper = require('../models/userDataMapper');
 const petController = {
 
   /**
-   * responds with one entry from "pet" relation
+   * responds with all entries from "pet" relation for one specific user
    *
    * @param {Object} request
    * @param {Object} response
