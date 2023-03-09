@@ -49,78 +49,6 @@ Une fois connecté, un __utilisateur__ ("user") peut :
   
   - spécifier s'il est disponible actuellement (avec détails de sa disponibilité et types d'animaux qu'il accepte de garder)
 
-## L'équipe
-
-- __DAÏ Inès__  
-  
-```js
-  const daiInes = {
-    first_name: "Inès",
-    last_name: "Daï",
-    project_main_role: "Front-end",
-    superpowers: [
-        "rappelle à l'équipe de prendre des pauses",
-        "réalise des GIFs de chats"
-        ]
-    };
-```
-
-Son profil GitHub : [github.com/ines-dai](https://github.com/ines-dai)  
-Son profil Linkedin: [linkedin.com/in/ines-a-d](https://www.linkedin.com/in/ines-a-d/)  
-Son portfolio : [noridoki.fr](http://noridoki.fr/)  
-
-- __HONORÉ Simon__
-
-```js
-  const honoreSimon = {
-    first_name: "Simon",
-    last_name: "Honoré",
-    project_main_role: "Front-end",
-    superpowers: [
-        "a su trouver le nom du site",
-        "fier Petowner d'un adorable chien"
-        ]
-    };
-```
-
-Son profil GitHub : [github.com/Simon-Honore](https://github.com/Simon-Honore)  
-Son profil Linkedin: [linkedin.com/in/simon-honore/](https://www.linkedin.com/in/simon-honore/)  
-
-- __KELLER Catherine__
-
-```js
-  const kellerCatherine = {
-    first_name: "Catherine",
-    last_name: "Keller",
-    project_main_role: "Back-end",
-    superpowers: [
-        "n'hésite pas à passer du back-end au front-end",
-        "aime et abuse des post-its"
-        ]
-    };
-```
-
-Son profil GitHub : [github.com/CatherineKeller](https://github.com/CatherineKeller)  
-Son profil Linkedin: [linkedin.com/in/kellercatherine](https://www.linkedin.com/in/kellercatherine/)  
-Son portfolio : [catherine-keller.fr](https://www.catherine-keller.fr) 
-
-- __SKICA Axelle__
-
-```js
-  const skicaAxelle = {
-    first_name: "Axelle",
-    last_name: "Skica",
-    project_main_role: "Back-end",
-    superpowers: [
-        "traductrice officielle des commentaires de code",
-        "passionnée de films de Noël"
-        ],
-    };
-```
-
-Son profil GitHub : [github.com/Axelle-SKICA](https://github.com/Axelle-SKICA)  
-Son profil Linkedin: [linkedin.com/in/axelle-skica](https://www.linkedin.com/in/axelle-skica) 
-
 ## Technologies utilisées
 
 ![VSCode](https://img.shields.io/badge/visual_studio_code-%23007ACC.svg?style=for-the-badge&logo=visual-studio-code&logoColor=white)
@@ -151,6 +79,84 @@ Son profil Linkedin: [linkedin.com/in/axelle-skica](https://www.linkedin.com/in/
 ![Swagger](https://img.shields.io/badge/swagger-84ea2c?style=for-the-badge&logo=swagger&logoColor=000000)
 ![Insomnia](https://img.shields.io/badge/insomnia-%234000BF.svg?style=for-the-badge&logo=insomnia&logoColor=white)
 
+## L'équipe
+
+Nous sommes 4 jeunes développeurs web fullstack ayant suivi la formation [_Développeur Web Fullstack JavaScript_](https://oclock.io/formations/developpeur-web-fullstack-javascript) de l'école O'clock.  
+Après presque 800 heures de formation (cours en téléprésentiel, exercices d'application des notions vues en cours, journées de pair-programming, 1 mois de spécialisation en _React.js_ pour certains ou _Data & API_ pour d'autres...), nous nous sommes attelés en équipe à notre projet de fin de formation :  
+:rocket: __La réalisation d'une application web, de sa conception au déploiement d'un MVP, en méthodologie Agile, pendant 1 mois.__
+
+Voici plus d'informations sur les membres de notre équipe :
+
+- __DAÏ Inès__  
+  
+```js
+  const daiInes = {
+    first_name: "Inès",
+    last_name: "Daï",
+    project_main_role: "Front-end",
+    superpowers: [
+        "rappelle à l'équipe de prendre des pauses",
+        "réalise des GIFs de chats"
+        ]
+    };
+```
+
+Son profil GitHub : [__github.com/ines-dai__](https://github.com/ines-dai)  
+Son profil Linkedin: [__linkedin.com/in/ines-a-d__](https://www.linkedin.com/in/ines-a-d/)  
+Son portfolio : [__noridoki.fr__](http://noridoki.fr/)  
+
+- __HONORÉ Simon__
+
+```js
+  const honoreSimon = {
+    first_name: "Simon",
+    last_name: "Honoré",
+    project_main_role: "Front-end",
+    superpowers: [
+        "a su trouver le nom du site",
+        "fier Petowner d'un adorable chien"
+        ]
+    };
+```
+
+Son profil GitHub : [__github.com/Simon-Honore__](https://github.com/Simon-Honore)  
+Son profil Linkedin: [__linkedin.com/in/simon-honore/__](https://www.linkedin.com/in/simon-honore/)  
+
+- __KELLER Catherine__
+
+```js
+  const kellerCatherine = {
+    first_name: "Catherine",
+    last_name: "Keller",
+    project_main_role: "Back-end",
+    superpowers: [
+        "n'hésite pas à passer du back-end au front-end",
+        "aime et abuse des post-its"
+        ]
+    };
+```
+
+Son profil GitHub : [__github.com/CatherineKeller__](https://github.com/CatherineKeller)  
+Son profil Linkedin: [__linkedin.com/in/kellercatherine__](https://www.linkedin.com/in/kellercatherine/)  
+Son portfolio : [__catherine-keller.fr__](https://www.catherine-keller.fr) 
+
+- __SKICA Axelle__
+
+```js
+  const skicaAxelle = {
+    first_name: "Axelle",
+    last_name: "Skica",
+    project_main_role: "Back-end",
+    superpowers: [
+        "traductrice officielle des commentaires de code",
+        "a appris le crochet et le tricot en autodidacte"
+        ],
+    };
+```
+
+Son profil GitHub : [__github.com/Axelle-SKICA__](https://github.com/Axelle-SKICA)  
+Son profil Linkedin: [__linkedin.com/in/axelle-skica__](https://www.linkedin.com/in/axelle-skica) 
+
 ## Routes API
 
 |ROUTE|METHODE|FONCTIONNALITE|
@@ -173,3 +179,47 @@ Son profil Linkedin: [linkedin.com/in/axelle-skica](https://www.linkedin.com/in/
 |/user/:id/ads|POST|créer une "ad" pour un user|
 |/ads/:id|PUT|modifier une "ad"|
 |/ads/:id|DELETE|supprimer une "ad"|
+
+## Évolutions envisagées 
+
+
+Ce projet a été initié dans le cadre de notre formation chez O'clock, et nous avions donc pour objectif de __déployer un MVP au bout de 1 mois__.  
+
+Mais nous avons également réfléchi à de __possibles évolutions__ pour notre application, que nous avons regroupées par possibles lotspour répartir la charge de travail :
+
+- V2 : 
+  - Gestion des dates avec ajout des disponibilités (datepicker, du… au…)
+  - Ajout de la liaison animal / annonce
+  - Possibilité de télécharger une photo de profil utilisateur / animal
+  - Inscription avec comptes Google/Apple
+  - Gestion de mise en favoris 
+
+- V3 :
+  - Ajout d’un rôle Administrateur (CRUD de tous les users/pets/ads/roles/pet_types, modération des annonces, des comptes...)
+  - Envoi d’emails (ex : confirmation d’un compte...)
+  - Ajout de “mot de passe oublié ?” avec envoi d'email pour en choisir un nouveau
+  - transformation des éléments de texte sur le profil en "badges" (ex : "OK chiens", "OK chat"…)
+
+- V4 :
+  - formulaire d'inscription en deux parties : 1 obligatoire + 1 facultative (bouton ignorer) => complétion du profil sous forme de slide avec barre de progression
+  - créations de profils plus complets pour les animaux (Photos, nom, âge, personnalité/comportement, ententes, soins particuliers, habitudes alimentaires, besoins (exercice...)
+
+- V5 :  
+  - filtre de recherche par localisation selon un rayon géographique autour d’une adresse
+  - affichage des petsitters sur une carte lors de l’affichage des résultats d’une recherche
+
+- V6 :
+  - Fonctionnalité de messagerie par "chat" entre deux utilisateurs
+  - confirmation de créneau / prestation sur le site
+  - une fois la prestation faite, le petsitters et le propriétaire laissent leurs avis
+  - affichage des avis petsitters et animaux
+  - modération des avis par les administrateurs
+
+- V7 :  
+Bulle de notification pour l'utilisateur :
+  - quand un avis a été donné sur lui
+  - quand une demande de petsitting lui a été faite... 
+  
+- V8 :
+  - compte professionnel avec paiement en ligne
+  - abonnement ou paiement ponctuel pour mettre en avant son profil dans les recherches
