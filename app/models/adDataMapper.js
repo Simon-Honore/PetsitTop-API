@@ -41,7 +41,7 @@ const adDataMapper = {
       text: `
         SELECT
           "ad".*,
-          json_agg(json_build_object('id', "user"."id",'first_name', "user"."first_name", 'last_name', "user"."last_name", "user"."email")) AS "user"
+          json_agg(json_build_object('id', "user"."id",'first_name', "user"."first_name", 'last_name', "user"."last_name", 'email', "user"."email")) AS "user"
         FROM "ad"
         LEFT JOIN "user" ON "ad"."user_id" = "user".id
         GROUP BY "ad".id
