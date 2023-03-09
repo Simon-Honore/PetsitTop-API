@@ -83,8 +83,14 @@ Une fois connecté, un __utilisateur__ ("user") peut :
 ## L'équipe
 
 Nous sommes 4 jeunes développeurs web fullstack ayant suivi la formation [_Développeur Web Fullstack JavaScript_](https://oclock.io/formations/developpeur-web-fullstack-javascript) de l'école O'clock.  
-Après presque 800 heures de formation (cours en téléprésentiel, exercices d'application des notions vues en cours, journées de pair-programming, 1 mois de spécialisation en _React.js_ pour certains ou _Data & API_ pour d'autres...), nous nous sommes attelés en équipe à notre projet de fin de formation :  
-:rocket: __La réalisation d'une application web, de sa conception au déploiement d'un MVP, en méthodologie Agile, pendant 1 mois.__
+
+Après presque 800 heures de formation (cours en téléprésentiel, exercices d'application des notions vues en cours, journées de pair-programming, 1 mois de spécialisation en _React.js_ pour certains ou _Data & API_ pour d'autres...), nous nous sommes attelés à notre projet de fin de formation :  
+
+ :rocket: __La réalisation d'une application web,__  
+ :rocket: __de sa conception au déploiement d'un MVP,__  
+ :rocket: __en méthodologie Agile,__  
+ :rocket: __pendant 1 mois,__  
+ :rocket: __en équipe.__
 
 Voici plus d'informations sur les membres de notre équipe :
 
