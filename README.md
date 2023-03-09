@@ -52,6 +52,7 @@ Une fois connecté, un __utilisateur__ ("user") peut :
 ## Technologies & outils utilisés
 
 ![VSCode](https://img.shields.io/badge/visual_studio_code-%23007ACC.svg?style=for-the-badge&logo=visual-studio-code&logoColor=white)
+![NPM](https://img.shields.io/badge/NPM-C53635?style=for-the-badge&logo=npm&logoColor=white)
 ![ESLint](https://img.shields.io/badge/eslint-8080F2?style=for-the-badge&logo=eslint)
 ![Git](https://img.shields.io/badge/git-%23F05032.svg?style=for-the-badge&logo=git&logoColor=white)
 ![Railway](https://img.shields.io/badge/railway-13121d?style=for-the-badge&logo=railway&logoColor=white)
