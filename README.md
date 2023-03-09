@@ -3,6 +3,8 @@
 Dépôt GitHub FRONT : https://github.com/O-clock-Maya/projet-02-pet-sitter-friendly-front  
 Dépôt GitHub BACK : https://github.com/O-clock-Maya/projet-02-pet-sitter-friendly-back
 
+ :sparkles: Voici [notre site PetsitTop](https://projet-02-pet-sitter-front-production.up.railway.app/) ! :sparkles:
+
 ## Lancement
 
 N'hésitez pas à cloner ce dépôt GitHub !
@@ -28,9 +30,6 @@ PetsitTop est une plateforme d'entraide et de mise en relation entre particulier
 - "Petowner" : propriétaire d'animaux ayant besoin de les faire garder
 - "Petsitter" : personne acceptant de garder des animaux domestiques
 
-N'hésitez pas à visiter [notre site PetsitTop](https://projet-02-pet-sitter-front-production.up.railway.app/) !
-
-
 ## Fonctionnalités
 
 Tout __visiteur__ (non connecté) du site peut rechercher des profils de Petsitters disponibles, en filtrant par département et par type d'animal à faire garder.  
@@ -40,7 +39,7 @@ Une fois connecté, un __utilisateur__ ("user") peut :
 - afficher son profil et celui des autres utilisateurs 
 - modifier/supprimer son profil
 - contacter d'autres utilisateurs (affichage de l'adresse email de contact)
-- accéder à l'ensemble des annonces postées par des Petowners pour leur recherche de Petsitter(filtre possible par département)
+- accéder à l'ensemble des annonces postées par des Petowners pour leur recherche de Petsitter (filtre possible par département)
 - un __Petowner__ connecté va pouvoir aussi :
   
   - ajouter/modifier/supprimer ses animaux ("pets")
