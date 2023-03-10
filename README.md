@@ -42,7 +42,7 @@ Une fois connecté, un __utilisateur__ ("user") peut :
 - accéder à l'ensemble des annonces postées par des Petowners pour leur recherche de Petsitter (filtre possible par département)
 - un __Petowner__ connecté va pouvoir aussi :
   
-  - ajouter/modifier/supprimer ses animaux ("pets")
+  - ajouter/modifier/supprimer ses animaux ("pets") => à venir
   - ajouter/modifier/supprimer des annonces de recherche de petsitter ("ads")
 
 - un __Petsitter__ connecté va pouvoir aussi :
@@ -195,7 +195,7 @@ Son profil Linkedin: [__linkedin.com/in/axelle-skica__](https://www.linkedin.com
 
 Ce projet a été initié dans le cadre de notre formation chez O'clock, et nous avions donc pour objectif de __déployer un MVP au bout de 1 mois__.  
 
-Mais nous avons également réfléchi à de __possibles évolutions__ pour notre application, que nous avons regroupées par possibles lotspour répartir la charge de travail :
+Mais nous avons également réfléchi à de __possibles évolutions__ pour notre application, que nous avons regroupées par possibles lots pour répartir la charge de travail :
 
 - V2 : 
   - Gestion des dates avec ajout des disponibilités (datepicker, du… au…)
